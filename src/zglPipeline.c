@@ -21,10 +21,11 @@
 #include "zglUtils.h"
 
 #define _FLUSH_ON_PROGRAM_SWITCH TRUE
+//#define _FLUSH_ON_PROGRAM_SWITCH_FOR_DRAW_SCOPE TRUE
 
 _ZGL afxError _DpuFlushPipelineState(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     afxUnit psoHandleIdx = dpu->dpuIterIdx % _ZGL_PSO_SET_POP;
@@ -145,7 +146,9 @@ _ZGL afxError _DpuFlushPipelineState(zglDpu* dpu)
 
 #ifdef _FLUSH_ON_PROGRAM_SWITCH
         // Draw scope already flushes explicitly on conclusion or implictly on FBO switch.
+#ifndef _FLUSH_ON_PROGRAM_SWITCH_FOR_DRAW_SCOPE
         if (!dpu->inDrawScope)
+#endif
         {
             gl->Flush();
         }
@@ -158,7 +161,7 @@ _ZGL afxError _DpuFlushPipelineState(zglDpu* dpu)
 
 _ZGL afxError DpuBindShadersEXT(zglDpu* dpu, avxShaderType stage, avxCodebase shd)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     GLuint glStage = AfxToGlShaderStageBit(stage);
@@ -168,7 +171,7 @@ _ZGL afxError DpuBindShadersEXT(zglDpu* dpu, avxShaderType stage, avxCodebase sh
 
 _ZGL afxError DpuBindPipeline(zglDpu* dpu, avxPipeline pip, avxVertexInput vin, afxFlags dynamics)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     if (!pip)
@@ -394,7 +397,7 @@ _ZGL afxResult _AfxRegisterOpenGlResourcesToQwadroDrawPipeline(avxPipeline pip)
 
 _ZGL afxError _ZglPipDtor(avxPipeline pip)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
 
     afxDrawSystem dsys = AvxGetPipelineHost(pip);
@@ -419,7 +422,7 @@ _ZGL afxError _ZglPipDtor(avxPipeline pip)
 
 _ZGL afxError _ZglPipCtor(avxPipeline pip, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_PIP, 1, &pip);
 
     if (_AVX_PIP_CLASS_CONFIG.ctor(pip, args, invokeNo)) AfxThrowError();

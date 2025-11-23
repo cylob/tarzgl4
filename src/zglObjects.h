@@ -24,6 +24,7 @@
 #define ZGL_MAX_DPUS 32
 #define ZGL_MAX_QO_HANDLES 32
 #define _ZGL_PSO_SET_POP 3
+#define _ZGL_FENC_SET_POP 3
 
 AFX_OBJECT(avxPipeline)
 {
@@ -98,9 +99,15 @@ AFX_OBJECT(avxFence)
 {
     AFX_OBJECT(_avxFence) m;
 
-    afxUnit fencUniqueId;
+    afxUnit         fencUniqueId;
     zglUpdateFlags  updFlags;
-    GLsync          glHandle;
+    union
+    {
+        afxAtomPtr  glHandleAtom;
+        GLsync      glHandle;
+    };
+    HANDLE          hEventW32;
+    afxLink         onSignalChain;
 };
 
 AFX_OBJECT(afxSemaphore)
@@ -156,7 +163,7 @@ AFX_OBJECT(avxCanvas)
 ZGL void _ZglDsysEnqueueDeletion(afxDrawSystem dsys, afxUnit exuIdx, afxUnit type, afxSize gpuHandle);
 
 
-ZGL afxError _ZglWaitFenc(afxBool waitAll, afxUnit64 timeout, afxUnit cnt, avxFence const fences[]);
+ZGL afxError _ZglWaitFenc(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[]);
 ZGL afxError _ZglResetFenc(afxUnit cnt, avxFence const fences[]);
 
 ZGL afxClassConfig const _ZglFencMgrCfg;

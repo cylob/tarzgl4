@@ -130,7 +130,7 @@ _ZGL void ZglToGlFormat(avxFormat pf, GLint *fmt, GLenum *layout, GLenum *type)
         {  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
     };
 
-    afxError err = NIL;
+    afxError err = { 0 };
     AFX_ASSERT(v[avxFormat_D32F].intFmt == GL_DEPTH_COMPONENT32F);
     AFX_ASSERT(v[avxFormat_D32].intFmt == GL_DEPTH_COMPONENT32);
     AFX_ASSERT(v[avxFormat_D24].intFmt == GL_DEPTH_COMPONENT24);
@@ -287,7 +287,7 @@ _ZGL void ZglToGlFormat2(avxFormat pf, GLint *fmt, GLenum *layout, GLenum *type)
         MAKE_FMT(avxFormat_RGTC2sn,     GL_COMPRESSED_SIGNED_RG_RGTC2, GL_COMPRESSED_SIGNED_RG_RGTC2, GL_NONE);
     }
 
-    afxError err = NIL;
+    afxError err = { 0 };
     AFX_ASSERT(vf[avxFormat_D32f].intFmt == GL_DEPTH_COMPONENT32F);
     //AFX_ASSERT(vf[avxFormat_D32f].intFmt == GL_DEPTH_COMPONENT32);
     AFX_ASSERT(vf[avxFormat_X8D24un].intFmt == GL_DEPTH_COMPONENT24);
@@ -393,7 +393,7 @@ _ZGL void ZglToGlColorSwizzling(avxSwizzling const *swizzling, GLenum *arrayedSw
 
 _ZGL void ZglDetermineGlTargetInternalFormatType(avxRaster ras, GLenum *target, GLint *intFmt, GLenum *fmt, GLenum *type)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(target);
     AFX_ASSERT(intFmt);
     AFX_ASSERT(fmt);
@@ -729,7 +729,7 @@ _ZGL void AfxToGlVertexFormat(afxVertexFormat fmt, GLint* siz, GLenum* typ, afxU
 
 _ZGL void _ZglCopyTexSubImage(zglDpu* dpu, GLenum glDstTarget, GLenum glSrcTarget, GLuint glSrcHandle, afxUnit opCnt, avxRasterCopy const ops[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     afxBool srcIs3d = FALSE;
 
@@ -815,7 +815,7 @@ _ZGL void _ZglCopyTexSubImage(zglDpu* dpu, GLenum glDstTarget, GLenum glSrcTarge
 
 _ZGL afxError _ZglTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxAddress const src)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     switch (glTarget)
     {
@@ -865,7 +865,7 @@ _ZGL afxError _ZglTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion 
 
 _ZGL afxError _ZglTextureSubImage(glVmt const* gl, GLuint glHandle, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxAddress const src)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     switch (glTarget)
     {
@@ -915,7 +915,7 @@ _ZGL afxError _ZglTextureSubImage(glVmt const* gl, GLuint glHandle, GLenum glTar
 
 _ZGL afxError _ZglCompressedTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxUnit compressedSiz, afxAddress const src)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     switch (glTarget)
     {
@@ -965,7 +965,7 @@ _ZGL afxError _ZglCompressedTexSubImage(glVmt const* gl, GLenum glTarget, avxRas
 
 _ZGL afxError _ZglCompressedTextureSubImage(glVmt const* gl, GLuint glHandle, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxUnit compressedSiz, afxAddress const src)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     switch (glTarget)
     {
@@ -1015,7 +1015,7 @@ _ZGL afxError _ZglCompressedTextureSubImage(glVmt const* gl, GLuint glHandle, GL
 
 _ZGL afxError zglBindTextureUnit(glVmt const* gl, GLuint unit, GLenum target, GLuint texture)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->BindTextureUnit)
     {
@@ -1031,7 +1031,7 @@ _ZGL afxError zglBindTextureUnit(glVmt const* gl, GLuint unit, GLenum target, GL
 
 _ZGL afxError zglCreateTextures(glVmt const* gl, GLenum target, GLsizei n, GLuint *textures)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->CreateTextures)
     {
@@ -1052,14 +1052,14 @@ _ZGL afxError zglCreateTextures(glVmt const* gl, GLenum target, GLsizei n, GLuin
 
 _ZGL afxError zglDeleteTextures(glVmt const* gl, GLsizei n, GLuint *textures)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     gl->DeleteTextures(n, textures); _ZglThrowErrorOccuried();
     return err;
 }
 
 _ZGL afxError zglMakeTextureStorage(glVmt const* gl, GLenum target, GLuint texture, GLsizei levelsOrSamples, GLenum internalformat, GLsizei width, GLsizei height, GLsizei depth, GLboolean fixedsamplelocations)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     switch (target)
     {
@@ -1159,7 +1159,7 @@ _ZGL afxError zglMakeTextureStorage(glVmt const* gl, GLenum target, GLuint textu
 
 _ZGL afxError zglCreateRenderbuffers(glVmt const* gl, GLsizei n, GLuint *renderbuffers)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->CreateRenderbuffers)
     {
@@ -1179,7 +1179,7 @@ _ZGL afxError zglCreateRenderbuffers(glVmt const* gl, GLsizei n, GLuint *renderb
 
 _ZGL afxError zglMakeRenderbufferStorage(glVmt const* gl, GLuint renderbuffer, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (1 >= samples)
     {
@@ -1210,7 +1210,7 @@ _ZGL afxError zglMakeRenderbufferStorage(glVmt const* gl, GLuint renderbuffer, G
 
 _ZGL afxError zglUpdateTextureSubImage(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *pixels)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     
     gl->BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
@@ -1226,7 +1226,7 @@ _ZGL afxError zglUpdateTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels); _ZglThrowErrorOccuried();
         }
         break;
@@ -1240,7 +1240,7 @@ _ZGL afxError zglUpdateTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels); _ZglThrowErrorOccuried();
         }
         break;
@@ -1255,7 +1255,7 @@ _ZGL afxError zglUpdateTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage2D(target, level, xoffset, zoffset, width, depth, format, type, pixels); _ZglThrowErrorOccuried();
         }
         break;
@@ -1271,7 +1271,7 @@ _ZGL afxError zglUpdateTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage1D(target, level, xoffset, width, format, type, pixels); _ZglThrowErrorOccuried();
         }
         break;
@@ -1288,7 +1288,7 @@ _ZGL afxError zglUpdateTextureSubImage(glVmt const* gl, GLenum target, GLuint te
 
 _ZGL afxError zglUpdateTextureSubImageCompressed(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, const void *data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
@@ -1304,7 +1304,7 @@ _ZGL afxError zglUpdateTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data); _ZglThrowErrorOccuried();
         }
         break;
@@ -1318,7 +1318,7 @@ _ZGL afxError zglUpdateTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, imageSize, data); _ZglThrowErrorOccuried();
         }
         break;
@@ -1333,7 +1333,7 @@ _ZGL afxError zglUpdateTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage2D(target, level, xoffset, zoffset, width, depth, format, imageSize, data); _ZglThrowErrorOccuried();
         }
         break;
@@ -1349,7 +1349,7 @@ _ZGL afxError zglUpdateTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, data); _ZglThrowErrorOccuried();
         }
         break;
@@ -1365,7 +1365,7 @@ _ZGL afxError zglUpdateTextureSubImageCompressed(glVmt const* gl, GLenum target,
 
 _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLuint buffer, GLsizei offset)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
 
@@ -1381,7 +1381,7 @@ _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1395,7 +1395,7 @@ _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage3D(target, level, xoffset, yoffset, zoffset, width, height, depth, format, type, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1410,7 +1410,7 @@ _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage2D(target, level, xoffset, zoffset, width, depth, format, type, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1426,7 +1426,7 @@ _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage1D(target, level, xoffset, width, format, type, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1439,7 +1439,7 @@ _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint te
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->TexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + zoffset, level, xoffset, yoffset, width, height, format, type, (void const*)offset); _ZglThrowErrorOccuried();
             AFX_ASSERT(1 >= depth);
         }
@@ -1455,7 +1455,7 @@ _ZGL afxError zglUnpackTextureSubImage(glVmt const* gl, GLenum target, GLuint te
 
 _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, GLuint buffer, GLsizei offset)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_UNPACK_BUFFER, buffer);
 
@@ -1471,7 +1471,7 @@ _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1485,7 +1485,7 @@ _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage3D(target, level, xoffset, zoffset, zoffset, width, height, depth, format, imageSize, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1500,7 +1500,7 @@ _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage2D(target, level, xoffset, zoffset, width, depth, format, imageSize, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1516,7 +1516,7 @@ _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage1D(target, level, xoffset, width, format, imageSize, (void const*)offset); _ZglThrowErrorOccuried();
         }
         break;
@@ -1529,7 +1529,7 @@ _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target,
         }
         else
         {
-            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, target, texture);
+            zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, target, texture);
             gl->CompressedTexSubImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + zoffset, level, xoffset, yoffset, width, height, format, imageSize, (void const*)offset); _ZglThrowErrorOccuried();
             AFX_ASSERT(1 >= depth);
         }
@@ -1543,7 +1543,7 @@ _ZGL afxError zglUnpackTextureSubImageCompressed(glVmt const* gl, GLenum target,
 
 _ZGL afxError zglDumpTextureSubImage(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, void *pixels)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
@@ -1567,7 +1567,7 @@ _ZGL afxError zglDumpTextureSubImage(glVmt const* gl, GLenum target, GLuint text
     }
     else if (gl->GetnTexImage)
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1583,7 +1583,7 @@ _ZGL afxError zglDumpTextureSubImage(glVmt const* gl, GLenum target, GLuint text
     }
     else
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1602,7 +1602,7 @@ _ZGL afxError zglDumpTextureSubImage(glVmt const* gl, GLenum target, GLuint text
 
 _ZGL afxError zglDumpTextureSubImageCompressed(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei bufSize, void *pixels)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 
@@ -1612,7 +1612,7 @@ _ZGL afxError zglDumpTextureSubImageCompressed(glVmt const* gl, GLenum target, G
     }
     else if (gl->GetnCompressedTexImage)
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1628,7 +1628,7 @@ _ZGL afxError zglDumpTextureSubImageCompressed(glVmt const* gl, GLenum target, G
     }
     else
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1647,7 +1647,7 @@ _ZGL afxError zglDumpTextureSubImageCompressed(glVmt const* gl, GLenum target, G
 
 _ZGL afxError zglPackTextureSubImage(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, GLsizei bufSize, GLuint buffer, GLsizei offset)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
 
@@ -1671,7 +1671,7 @@ _ZGL afxError zglPackTextureSubImage(glVmt const* gl, GLenum target, GLuint text
     }
     else if (gl->GetnTexImage)
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1687,7 +1687,7 @@ _ZGL afxError zglPackTextureSubImage(glVmt const* gl, GLenum target, GLuint text
     }
     else
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1706,7 +1706,7 @@ _ZGL afxError zglPackTextureSubImage(glVmt const* gl, GLenum target, GLuint text
 
 _ZGL afxError zglPackTextureSubImageCompressed(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLsizei bufSize, GLuint buffer, GLsizei offset)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     gl->BindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
 
@@ -1716,7 +1716,7 @@ _ZGL afxError zglPackTextureSubImageCompressed(glVmt const* gl, GLenum target, G
     }
     else if (gl->GetnCompressedTexImage)
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1732,7 +1732,7 @@ _ZGL afxError zglPackTextureSubImageCompressed(glVmt const* gl, GLenum target, G
     }
     else
     {
-        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER, target, texture);
+        zglBindTextureUnit(gl, ZGL_COPY_READ_RASTER_SLOT, target, texture);
 
         gl->PixelStorei(GL_PACK_SKIP_PIXELS, xoffset); _ZglThrowErrorOccuried();
         gl->PixelStorei(GL_PACK_SKIP_ROWS, yoffset); _ZglThrowErrorOccuried();
@@ -1751,7 +1751,7 @@ _ZGL afxError zglPackTextureSubImageCompressed(glVmt const* gl, GLenum target, G
 
 _ZGL afxError zglClearTexImage(glVmt const* gl, GLuint texture, GLint level, GLenum format, GLenum type, const void *data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->ClearTexImage)
     {
@@ -1766,7 +1766,7 @@ _ZGL afxError zglClearTexImage(glVmt const* gl, GLuint texture, GLint level, GLe
 
 _ZGL afxError zglClearTexSubImage(glVmt const* gl, GLenum target, GLuint texture, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLenum type, const void *data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->ClearTexSubImage)
     {
@@ -1819,7 +1819,7 @@ _ZGL afxError zglClearTexSubImage(glVmt const* gl, GLenum target, GLuint texture
 
 _ZGL afxError zglBlitFramebuffer(glVmt const* gl, GLuint readFramebuffer, GLuint drawFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->BlitNamedFramebuffer)
     {
@@ -1837,7 +1837,7 @@ _ZGL afxError zglBlitFramebuffer(glVmt const* gl, GLuint readFramebuffer, GLuint
 
 _ZGL afxError zglTextureBuffer(glVmt const* gl, GLuint texture, GLenum internalformat, GLuint buffer)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->TextureBuffer)
     {
@@ -1853,7 +1853,7 @@ _ZGL afxError zglTextureBuffer(glVmt const* gl, GLuint texture, GLenum internalf
 
 _ZGL afxError zglTextureBufferRange(glVmt const* gl, GLuint texture, GLenum internalformat, GLuint buffer, GLintptr offset, GLsizeiptr size)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->TextureBufferRange)
     {
@@ -1870,14 +1870,14 @@ _ZGL afxError zglTextureBufferRange(glVmt const* gl, GLuint texture, GLenum inte
 
 _ZGL afxError zglDeleteBuffers(glVmt const* gl, GLsizei n, GLuint *buffers)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     gl->DeleteBuffers(n, buffers); _ZglThrowErrorOccuried();
     return err;
 }
 
 _ZGL afxError zglCreateBuffers(glVmt const* gl, GLenum target, GLsizei n, GLuint *buffers)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->CreateBuffers)
     {
@@ -1906,7 +1906,7 @@ _ZGL afxError zglCreateBuffers(glVmt const* gl, GLenum target, GLsizei n, GLuint
 
 _ZGL afxError zglBindBufferBase(glVmt const* gl, GLenum target, GLuint first, GLsizei count, const GLuint *buffers)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->BindBuffersBase)
     {
@@ -1924,7 +1924,7 @@ _ZGL afxError zglBindBufferBase(glVmt const* gl, GLenum target, GLuint first, GL
 
 _ZGL afxError zglBindBufferRange(glVmt const* gl, GLenum target, GLuint first, GLsizei count, const GLuint *buffers, const GLintptr *offsets, const GLsizeiptr *sizes)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->BindBuffersRange)
     {
@@ -1942,7 +1942,7 @@ _ZGL afxError zglBindBufferRange(glVmt const* gl, GLenum target, GLuint first, G
 
 _ZGL afxError zglBindTextures(glVmt const* gl, GLuint first, GLsizei count, const GLenum* targets, const GLuint *textures)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->BindBuffersBase)
     {
@@ -1960,7 +1960,7 @@ _ZGL afxError zglBindTextures(glVmt const* gl, GLuint first, GLsizei count, cons
 
 _ZGL afxError zglBindSamplers(glVmt const* gl, GLuint first, GLsizei count, const GLuint *samplers)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->BindSamplers)
     {
@@ -1978,7 +1978,7 @@ _ZGL afxError zglBindSamplers(glVmt const* gl, GLuint first, GLsizei count, cons
 
 _ZGL afxError zglMakeBufferStorage(glVmt const* gl, GLenum target, GLuint buffer, GLsizeiptr size, const void *data, GLbitfield flags)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->NamedBufferStorage)
     {
@@ -1994,7 +1994,7 @@ _ZGL afxError zglMakeBufferStorage(glVmt const* gl, GLenum target, GLuint buffer
 
 _ZGL afxError zglUpdateBufferSubData(glVmt const* gl, GLenum target, GLuint buffer, GLintptr offset, GLsizeiptr size, const void *data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->NamedBufferSubData)
     {
@@ -2010,7 +2010,7 @@ _ZGL afxError zglUpdateBufferSubData(glVmt const* gl, GLenum target, GLuint buff
 
 _ZGL afxError zglCopyNamedBufferSubData(glVmt const* gl, GLenum readTarget, GLuint readBuffer, GLenum writeTarget, GLuint writeBuffer, GLintptr readOffset, GLintptr writeOffset, GLsizeiptr size)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->CopyNamedBufferSubData)
     {
@@ -2027,7 +2027,7 @@ _ZGL afxError zglCopyNamedBufferSubData(glVmt const* gl, GLenum readTarget, GLui
 
 _ZGL afxError zglClearBufferData(glVmt const* gl, GLenum target, GLuint buffer, GLenum internalformat, GLenum format, GLenum type, const void *data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->ClearNamedBufferData)
     {
@@ -2043,7 +2043,7 @@ _ZGL afxError zglClearBufferData(glVmt const* gl, GLenum target, GLuint buffer, 
 
 _ZGL afxError zglClearBufferSubData(glVmt const* gl, GLenum target, GLuint buffer, GLenum internalformat, GLintptr offset, GLsizeiptr size, GLenum format, GLenum type, const void *data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->ClearNamedBufferSubData)
     {
@@ -2059,7 +2059,7 @@ _ZGL afxError zglClearBufferSubData(glVmt const* gl, GLenum target, GLuint buffe
 
 _ZGL afxError zglMapBuffer(glVmt const* gl, GLenum target, GLuint buffer, GLenum access, void** pp)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     void* p;
 
     if (gl->MapNamedBuffer)
@@ -2077,7 +2077,7 @@ _ZGL afxError zglMapBuffer(glVmt const* gl, GLenum target, GLuint buffer, GLenum
 
 _ZGL afxError zglMapBufferRange(glVmt const* gl, GLenum target, GLuint buffer, GLintptr offset, GLsizeiptr length, GLbitfield access, void** pp)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     void* p;
 
     if (gl->MapNamedBufferRange)
@@ -2096,7 +2096,7 @@ _ZGL afxError zglMapBufferRange(glVmt const* gl, GLenum target, GLuint buffer, G
 
 _ZGL afxError zglUnmapBuffer(glVmt const* gl, GLenum target, GLuint buffer)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->UnmapNamedBuffer)
     {
@@ -2112,7 +2112,7 @@ _ZGL afxError zglUnmapBuffer(glVmt const* gl, GLenum target, GLuint buffer)
 
 _ZGL afxError zglFlushBufferRange(glVmt const* gl, GLenum target, GLuint buffer, GLintptr offset, GLsizeiptr length)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (gl->FlushMappedNamedBufferRange)
     {

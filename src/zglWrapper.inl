@@ -20,7 +20,7 @@
 
 ZGLINL void ZglBindTextureUnit(zglDpu* dpu, GLuint unit, GLenum target, GLuint texture)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     if (gl->BindTextureUnit)
@@ -36,14 +36,14 @@ ZGLINL void ZglBindTextureUnit(zglDpu* dpu, GLuint unit, GLenum target, GLuint t
 
 ZGLINL void ZglUsePipeline(zglDpu* dpu, GLuint program)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     gl->UseProgram(program); _ZglThrowErrorOccuried();
 }
 
 ZGLINL void ZglBindFramebuffer(zglDpu* dpu, GLenum target, GLuint fbo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     gl->BindFramebuffer(target, fbo); _ZglThrowErrorOccuried();
 }

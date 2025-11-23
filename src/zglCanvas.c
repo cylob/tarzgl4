@@ -21,11 +21,12 @@
 
 //#define _BIND_FBO_FOR_READ_CONCURRENTLY_ON_DRAW_SCOPE TRUE
 #define _FLUSH_ON_DRAW_SCOPE_CONCLUSION TRUE
+#define _FLUSH_ON_DRAW_SCOPE_SUSPENSION TRUE
 #define _CLEAR_CANVAS_WITH_GEN_FBOS TRUE
 
 _ZGL afxError _ZglBindFboAttachment(glVmt const* gl, GLenum glTarget, GLuint fbo, GLenum glAttachment, GLenum texTarget, GLuint texHandle, GLint level, GLuint z, afxBool multilayered)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (fbo)
     {
@@ -157,7 +158,7 @@ _ZGL afxError _ZglBindFboAttachment(glVmt const* gl, GLenum glTarget, GLuint fbo
 _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, afxBool keepBound)
 {
     //AfxEntry("canv=%p", canv);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     afxUnit exuIdx = dpu->m.exuIdx;
     afxBool bound = (canv == dpu->canv);
@@ -390,7 +391,7 @@ _ZGL afxError _DpuBindAndSyncCanv(zglDpu* dpu, GLenum glTarget, avxCanvas canv, 
 
 _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas canv, afxLayeredRect const* bounds, afxUnit cCnt, avxDrawTarget const* c, avxDrawTarget const* d, avxDrawTarget const* s, afxString const* dbgTag, afxBool defFbo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
@@ -749,7 +750,7 @@ _ZGL void DpuCommenceDrawScope(zglDpu* dpu, avxDrawScopeFlags flags, avxCanvas c
 
 _ZGL void DpuConcludeDrawScope(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     AFX_ASSERT(dpu->inDrawScope != FALSE); // This is a transfer operation.
@@ -795,8 +796,13 @@ _ZGL void DpuConcludeDrawScope(zglDpu* dpu)
     }
     else
     {
-        // When suspending a scope, we don't unbind the FBO to allow it to prepare discards and resolves at once right into the next FBO.
-
+        /*
+            When suspending a scope, 
+            we don't unbind the FBO to allow it to prepare discards and resolves at once right into the next FBO.
+        */
+#if _FLUSH_ON_DRAW_SCOPE_SUSPENSION
+        gl->Flush(); _ZglThrowErrorOccuried(); // flush was presenting/swapping without wglSwapBuffers.
+#endif
     }
 
     avxCanvas canv = dpu->canv;
@@ -829,7 +835,7 @@ _ZGL void DpuConcludeDrawScope(zglDpu* dpu)
 
 _ZGL void DpuNextPass(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     AFX_ASSERT(dpu->inDrawScope != FALSE); // This is a transfer operation.
@@ -838,7 +844,7 @@ _ZGL void DpuNextPass(zglDpu* dpu)
 
 _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins[], avxClearValue const values[], afxUnit areaCnt, afxLayeredRect const areas[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT(dpu->inDrawScope);
     // This is not a transfer command, as it required a ongoing draw scope to having a target canvas.
@@ -969,7 +975,7 @@ _ZGL afxError _ZglDpuClearCanvas(zglDpu* dpu, afxUnit bufCnt, afxUnit const bins
 
 _ZGL afxError _ZglDpuResolveCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, afxUnit opCnt, avxRasterCopy const ops[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &dst);
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &src);
@@ -1002,7 +1008,7 @@ _ZGL afxError _ZglDpuResolveCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, af
 
 _ZGL afxError _ZglDpuBlitCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, afxUnit opCnt, avxRasterBlit const ops[], avxTexelFilter flt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &dst);
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &src);
@@ -1031,7 +1037,7 @@ _ZGL afxError _ZglDpuBlitCanvas(zglDpu* dpu, avxCanvas src, avxCanvas dst, afxUn
 #if 0
 _ZGL afxError _ZglReadjustCanvasCb(avxCanvas canv, afxWarp const whd)
 {
-	afxError err = AFX_ERR_NONE;
+	afxError err = { 0 };
 	AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 	AFX_ASSERT(whd);
 	AFX_ASSERT(whd[0]);
@@ -1067,7 +1073,7 @@ _ZGL afxError _ZglReadjustCanvasCb(avxCanvas canv, afxWarp const whd)
 
 _ZGL afxError _AfxCanvDropAllSurfaces(avxCanvas canv)
 {
-	afxError err = AFX_ERR_NONE;
+	afxError err = { 0 };
 	AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
 	//canv->m.colorCnt = 0;
@@ -1077,7 +1083,7 @@ _ZGL afxError _AfxCanvDropAllSurfaces(avxCanvas canv)
 
 _ZGL afxError _ZglCanvDtor(avxCanvas canv)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_CANV, 1, &canv);
 
     afxDrawSystem dsys = AvxGetCanvasHost(canv);
@@ -1114,7 +1120,7 @@ _ZGL afxError _ZglCanvDtor(avxCanvas canv)
 
 _ZGL afxError _ZglCanvCtor(avxCanvas canv, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (_AVX_CANV_CLASS_CONFIG.ctor(canv, args, invokeNo)) AfxThrowError();
     else

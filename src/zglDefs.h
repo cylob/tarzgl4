@@ -104,8 +104,8 @@
 
 #define ZGL_MAX_COMBINED_TEXTURE_IMAGE_UNITS 80
 #define ZGL_LAST_COMBINED_TEXTURE_IMAGE_UNIT (ZGL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1)
-#define ZGL_COPY_READ_RASTER (ZGL_LAST_COMBINED_TEXTURE_IMAGE_UNIT - 1)
-#define ZGL_COPY_WRITE_RASTER (ZGL_LAST_COMBINED_TEXTURE_IMAGE_UNIT - 2)
+#define ZGL_COPY_READ_RASTER_SLOT (ZGL_LAST_COMBINED_TEXTURE_IMAGE_UNIT - 1)
+#define ZGL_COPY_WRITE_RASTER_SLOT (ZGL_LAST_COMBINED_TEXTURE_IMAGE_UNIT - 2)
 
 #define _ZGL_MAX_VAO_PER_TIME 8
 //#define _ZGL_MAX_VP_PER_SET 8
@@ -123,19 +123,40 @@
 //#define FORCE_VBO_REBIND TRUE
 //#define FORCE_IBO_REBIND TRUE
 // unbind GL buffers at end of each function; to avoid stalling.
-#define UNBIND_GL_BUF TRUE
+#define _ALWAYS_UNBIND_GL_BUF TRUE
  //#define COHERENT_PUSHABLES
+#define _USE_BUF_RW_SLOT TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_OPS TRUE
+#if _USE_RW_SLOTS_ON_BUFFER_OPS
+#define _USE_RW_SLOTS_ON_BUFFER_COPY TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_FILL TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_DUMP TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_UPDATE TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_DOWNLOAD TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_UPLOAD TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_RW_SLOTS_ON_BUFFER_MAPPING TRUE // what about VBO and IBOS without a bound VAO?
+#endif//_USE_RW_SLOTS_ON_BUFFER_OPS
+#define _USE_IO_SLOTS_ON_BUFFER_OPS TRUE
+#if _USE_IO_SLOTS_ON_BUFFER_OPS
+#define _USE_IO_SLOTS_ON_BUFFER_COPY TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_IO_SLOTS_ON_BUFFER_FILL TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_IO_SLOTS_ON_BUFFER_DUMP TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_IO_SLOTS_ON_BUFFER_UPDATE TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_IO_SLOTS_ON_BUFFER_DOWNLOAD TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_IO_SLOTS_ON_BUFFER_UPLOAD TRUE // what about VBO and IBOS without a bound VAO?
+#define _USE_IO_SLOTS_ON_BUFFER_MAPPING TRUE // what about VBO and IBOS without a bound VAO?
+#endif//_USE_IO_SLOTS_ON_BUFFER_OPS
 
 // unbind GL textures at end of each function; to avoid issues with layout transition.
-#define UNBIND_GL_TEX TRUE
+#define _ALWAYS_UNBIND_GL_TEX TRUE
 // allow avxRaster to be backed as renderbuffer when it is only drawable.
 //#define RENDERBUFFER_ENABLED TRUE
 // generate a FBO at call site to do blit instead of using common shared FBOs.
-#define _BLIT_RASTER_WITH_GEN_FBOS TRUE
+#define _USE_GEN_FBO_ON_RASTER_BLIT TRUE
 // generate a FBO at call site to do resolve instead of using common shared FBOs.
-#define _RESOLVE_RASTER_WITH_GEN_FBOS TRUE
+#define _USE_GEN_FBO_ON_RASTER_RESOLVE TRUE
 // generate a FBO at call site to do clear instead of using common shared FBOs.
-#define _CLEAR_RASTER_WITH_GEN_FBOS TRUE
+#define _USE_GEN_FBO_ON_RASTER_CLEAR TRUE
 
 typedef enum zglUpdateFlags
 {

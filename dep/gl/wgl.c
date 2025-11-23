@@ -629,7 +629,7 @@ _ZGL HMODULE hOpengl32Dll = NIL;
 
 _ZGL afxError wglLoadModule(HMODULE opengl32, afxUnit* verMajor, afxUnit* verMinor, afxUnit* verPatch)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     static afxBool loaded = FALSE;
     static afxUnit loadedVerMajor = 0;
     static afxUnit loadedVerMinor = 0;

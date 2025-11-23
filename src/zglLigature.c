@@ -65,7 +65,7 @@
 
 _ZGL void DpuBindBuffers(zglDpu* dpu, afxUnit set, afxUnit first, afxUnit cnt, avxBufferedMap const maps[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_RANGE(_ZGL_MAX_BIND_PER_SET, first, cnt);
     AFX_ASSERT_RANGE(_ZGL_MAX_SET_PER_LIGA, set, 1);
 
@@ -91,7 +91,7 @@ _ZGL void DpuBindBuffers(zglDpu* dpu, afxUnit set, afxUnit first, afxUnit cnt, a
 
 _ZGL void DpuBindRasters(zglDpu* dpu, afxUnit set, afxUnit first, afxUnit cnt, avxRaster const rasters[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_RANGE(_ZGL_MAX_BIND_PER_SET, first, cnt);
     AFX_ASSERT_RANGE(_ZGL_MAX_SET_PER_LIGA, set, 1);
 
@@ -109,7 +109,7 @@ _ZGL void DpuBindRasters(zglDpu* dpu, afxUnit set, afxUnit first, afxUnit cnt, a
 
 _ZGL void DpuBindSamplers(zglDpu* dpu, afxUnit set, afxUnit first, afxUnit cnt, avxSampler const samplers[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_RANGE(_ZGL_MAX_BIND_PER_SET, first, cnt);
     AFX_ASSERT_RANGE(_ZGL_MAX_SET_PER_LIGA, set, 1);
 
@@ -127,7 +127,7 @@ _ZGL void DpuBindSamplers(zglDpu* dpu, afxUnit set, afxUnit first, afxUnit cnt, 
 
 _ZGL void DpuUnbindSamplers(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     
     // In some buggy drivers, it seem that samplers are bound to GL program. 
     // So we must unbind them to provoke rebinding on next program binding.
@@ -159,7 +159,7 @@ _ZGL void DpuUnbindSamplers(zglDpu* dpu)
 
 _ZGL void DpuPushConstants(zglDpu* dpu, afxUnit32 offset, afxUnit32 siz, void const* data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     // copy right into mapped memory.
@@ -173,7 +173,7 @@ _ZGL void DpuPushConstants(zglDpu* dpu, afxUnit32 offset, afxUnit32 siz, void co
 
 _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -660,7 +660,7 @@ _ZGL void _ZglFlushLigatureState(zglDpu* dpu)
 #if 0
 _ZGL afxError _ZglDqueBindAndSyncLigaSub(afxDrawBridge dexu, afxUnit unit, avxLigature liga, avxLigature legt2)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     avxLigature liga = AfxLegoGetTemplate(liga);
     AfxAssertObject(liga, afxFcc_LIGA);
     AFX_ASSERT(liga->m.entryCnt >= legt2->entryCnt);
@@ -731,7 +731,7 @@ _ZGL afxError _ZglDqueBindAndSyncLigaSub(afxDrawBridge dexu, afxUnit unit, avxLi
 _ZGL afxError _ZglDqueBindAndSyncLiga(afxDrawBridge dexu, afxUnit unit, avxLigature liga)
 {
     //AfxEntry("pip=%p", pip);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_LIGA, 1, &liga);
     avxLigature liga = AfxLegoGetTemplate(liga);
     AfxAssertObject(liga, afxFcc_LIGA);
@@ -766,7 +766,7 @@ _ZGL afxError _ZglDqueBindAndSyncLiga(afxDrawBridge dexu, afxUnit unit, avxLigat
 
 _ZGL afxError _DpuBindAndResolveLiga(zglDpu* dpu, avxLigature liga, GLuint glHandle)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_LIGA, 1, &liga);
     glVmt const* gl = dpu->gl;
     AFX_ASSERT(glHandle);
@@ -941,7 +941,7 @@ _ZGL afxError _DpuBindAndResolveLiga(zglDpu* dpu, avxLigature liga, GLuint glHan
 
 _ZGL afxError _ZglLigaDtor(avxLigature liga)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_LIGA, 1, &liga);
 
     afxDrawSystem dsys = AvxGetLigatureHost(liga);
@@ -977,7 +977,7 @@ _ZGL afxError _ZglLigaDtor(avxLigature liga)
 
 _ZGL afxError _ZglLigaCtor(avxLigature liga, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_LIGA, 1, &liga);
 
     if (_AVX_LIGA_CLASS_CONFIG.ctor(liga, args, invokeNo))

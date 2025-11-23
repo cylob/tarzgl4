@@ -46,7 +46,7 @@
 
 _ZGLINL void _ZglFlushDsChanges(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     // DEPTH BIAS
@@ -484,7 +484,7 @@ _ZGLINL void _ZglFlushDsChanges(zglDpu* dpu)
 
 _ZGL void _ZglFlushRsChanges(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
 #ifndef _ZGL_DBG_IGNORE_RASTERIZER_DISCARD

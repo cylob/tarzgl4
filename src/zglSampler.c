@@ -27,7 +27,7 @@
 _ZGL afxError _DpuBindAndSyncSamp(zglDpu* dpu, afxUnit glUnit, avxSampler samp)
 {
     //AfxEntry("smp=%p", smp);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -141,7 +141,7 @@ _ZGL afxError _DpuBindAndSyncSamp(zglDpu* dpu, afxUnit glUnit, avxSampler samp)
 
 _ZGL afxError _ZglSampDtor(avxSampler samp)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SAMP, 1, &samp);
 
     if (samp->glHandle)
@@ -159,7 +159,7 @@ _ZGL afxError _ZglSampDtor(avxSampler samp)
 
 _ZGL afxError _ZglSampCtor(avxSampler samp, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SAMP, 1, &samp);
 
     if (_AVX_SAMP_CLASS_CONFIG.ctor(samp, args, invokeNo)) AfxThrowError();

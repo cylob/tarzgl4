@@ -43,7 +43,7 @@ _ZGL afxString const targaSignature = AFX_STRING(
 
 _ZGL afxError _ZglProcessDeletionQueue(glVmt const* gl, afxInterlockedQueue* deletionQueue)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     _zglDeleteGlRes res;
     while (AfxPopInterlockedQueue(deletionQueue, &res))
@@ -116,7 +116,7 @@ _ZGL afxError _ZglProcessDeletionQueue(glVmt const* gl, afxInterlockedQueue* del
 _ZGL void _ZglDsysEnqueueDeletion(afxDrawSystem dsys, afxUnit exuIdx, afxUnit type, afxSize gpuHandle)
 {
     //AfxEntry("dsys=%p", dsys);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
@@ -137,7 +137,7 @@ _ZGL void _ZglDsysEnqueueDeletion(afxDrawSystem dsys, afxUnit exuIdx, afxUnit ty
 
 _ZGL afxResult _ZglDdevIoctrlCb(afxDrawDevice ddev, afxUnit reqCode, va_list va)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
     afxResult rslt = 0;
 
@@ -376,7 +376,7 @@ _ZGL afxResult _ZglDdevIoctrlCb(afxDrawDevice ddev, afxUnit reqCode, va_list va)
 
 _ZGL afxError _ZglDdevDtorCb(afxDrawDevice ddev)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
 
     AfxExhaustChainedClasses(&ddev->m.dev.classes);
@@ -395,12 +395,12 @@ _ZGL afxError _ZglDdevDtorCb(afxDrawDevice ddev)
 
 _ZGL afxError _ZglDdevCtorCb(afxDrawDevice ddev, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DDEV, 1, &ddev);
 
     afxModule icd = args[0];
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
-    _avxDrawDeviceRegistration const* info = (_avxDrawDeviceRegistration const *)(args[1]) + invokeNo;
+    _avxDdevReg const* info = (_avxDdevReg const *)(args[1]) + invokeNo;
     AFX_ASSERT(info);
 
     if (_AVX_DDEV_CLASS_CONFIG.ctor(ddev, (void*[]) { icd, (void*)info, args[2] }, 0))
@@ -556,7 +556,7 @@ _ZGL afxError _ZglDdevCtorCb(afxDrawDevice ddev, void** args, afxUnit invokeNo)
 
 _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_MDLE, 1, &icd);
 
     afxClassConfig ddevClsCfg = _AVX_DDEV_CLASS_CONFIG;
@@ -569,7 +569,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     dsysClsCfg.ctor = (void*)_ZglDsysCtorCb;
     dsysClsCfg.dtor = (void*)_ZglDsysDtorCb;
 
-    _avxDrawSystemImplementation impl = { 0 };
+    _avxDsysImp impl = { 0 };
     impl.ddevCls = ddevClsCfg;
     impl.dsysCls = dsysClsCfg;
 
@@ -743,7 +743,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     }
 #endif
 
-    _avxDrawDeviceRegistration const gfxDdevInfo =
+    _avxDdevReg const gfxDdevInfo =
     {
         .dev.urn = AFX_STRING("targa-hwr"),
         .dev.type = afxDeviceType_DRAW,
@@ -762,7 +762,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
         .maxQueCnt = 16,
         .acceleration = afxAcceleration_DPU | afxAcceleration_GPU
     };
-    _avxDrawDeviceRegistration const computeDdevInfo =
+    _avxDdevReg const computeDdevInfo =
     {
         .dev.urn = AFX_STRING("targa-hwc"),
         .dev.type = afxDeviceType_DRAW,
@@ -779,7 +779,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
         .maxQueCnt = 16,
         .acceleration = afxAcceleration_DPU | afxAcceleration_GPU
     };
-    _avxDrawDeviceRegistration const transferDdevInfo =
+    _avxDdevReg const transferDdevInfo =
     {
         .dev.urn = AFX_STRING("targa-hwio"),
         .dev.type = afxDeviceType_DRAW,
@@ -795,7 +795,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
         .maxQueCnt = 16,
         .acceleration = afxAcceleration_DPU | afxAcceleration_GPU
     };
-    _avxDrawDeviceRegistration const videoDdevInfo =
+    _avxDdevReg const videoDdevInfo =
     {
         .dev.urn = AFX_STRING("targa-wgl"),
         .dev.type = afxDeviceType_DRAW,
@@ -813,7 +813,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
     };
 
     afxUnit ddevCnt = 0;
-    _avxDrawDeviceRegistration ddevInfos[16] = { 0 };
+    _avxDdevReg ddevInfos[16] = { 0 };
 
     // add device's graphics port
     ddevInfos[ddevCnt] = gfxDdevInfo;
@@ -839,7 +839,7 @@ _ZGL afxError afxIcdHook(afxModule icd, afxUri const* manifest)
 
     for (afxUnit ddevIdx = 0; ddevIdx < ddevCnt; ddevIdx++)
     {
-        _avxDrawDeviceRegistration* ddevn = &ddevInfos[ddevIdx];
+        _avxDdevReg* ddevn = &ddevInfos[ddevIdx];
         ddevn->limits = drawLimits;
         ddevn->features = drawFeatures;
     }

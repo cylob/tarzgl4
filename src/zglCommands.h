@@ -24,7 +24,7 @@
 ZGL afxError _DpuBindAndSyncSamp(zglDpu* dpu, afxUnit glUnit, avxSampler samp);
 ZGL afxError _DpuSyncShd(zglDpu* dpu, avxCodebase shd, avxShaderType stage);
 ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxCodebase codb, afxUnit stageCnt, _avxProgrammableStage stages[], afxUnit* glShaderCnt, GLuint glShaders[]);
-ZGL afxError _DpuSurfSync(zglDpu* dpu, _avxDrawBin surf, glVmt const* gl); // must be used before texUpdate
+ZGL afxError _DpuSurfSync(zglDpu* dpu, _avxCanvasBin surf, glVmt const* gl); // must be used before texUpdate
 ZGL afxError DpuBindAndSyncRas(zglDpu* dpu, afxUnit glUnit, avxRaster tex, afxBool keepBound);
 ZGL afxError _ZglTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxAddress const src);
 ZGL afxError _ZglCompressedTexSubImage(glVmt const* gl, GLenum glTarget, avxRasterRegion const* rgn, GLenum glFmt, GLenum glType, afxUnit compressedSiz, afxAddress const src);
@@ -63,7 +63,8 @@ ZGL afxError _DpuPresentDout(zglDpu* dpu, afxSurface dout, afxUnit outBufIdx);
 
 ZGL afxError _ZglBindFboAttachment(glVmt const* gl, GLenum glTarget, GLuint fbo, GLenum glAttachment, GLenum texTarget, GLuint texHandle, GLint level, GLuint z, afxBool multilayered);
 
-ZGL afxError _ZglWaitFenc(afxBool waitAll, afxUnit64 timeout, afxUnit cnt, avxFence const fences[]);
+ZGL afxError _ZglWaitFenc(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[]);
+ZGL afxError _ZglWaitFencOnHost(afxDrawSystem dsys, afxUnit64 timeout, afxBool waitAll, afxUnit cnt, avxFence const fences[], afxUnit64 const values[]);
 ZGL afxError _ZglResetFenc(afxUnit cnt, avxFence const fences[]);
 
 ZGL void _ZglCopyTexSubImage(zglDpu* dpu, GLenum glDstTarget, GLenum glSrcTarget, GLuint glSrcHandle, afxUnit opCnt, avxRasterCopy const ops[]);
@@ -89,10 +90,10 @@ ZGL void DpuPopDebugScope(zglDpu* dpu);
 
 ZGL void DpuDraw(zglDpu* dpu, avxDrawIndirect const* data);
 ZGL void DpuDrawIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUnit32 drawCnt, afxUnit32 stride);
-ZGL void DpuDrawIndirectCount(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride);
+ZGL void DpuDrawIndirect2(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride);
 ZGL void DpuDrawIndexed(zglDpu* dpu, avxDrawIndexedIndirect const* data);
 ZGL void DpuDrawIndexedIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUnit32 drawCnt, afxUnit32 stride);
-ZGL void DpuDrawIndexedIndirectCount(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride);
+ZGL void DpuDrawIndexedIndirect2(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride);
 ZGL void DpuDispatch(zglDpu* dpu, afxUnit grpCntX, afxUnit grpCntY, afxUnit grpCntZ);
 ZGL void DpuDispatchIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset);
 

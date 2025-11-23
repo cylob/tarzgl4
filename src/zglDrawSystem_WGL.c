@@ -18,11 +18,11 @@
 #include "zglCommands.h"
 #include "zglObjects.h"
 #define _AUX_UX_C
-#include "../qwadro_afx/src/ux/impl/auxImplementation.h"
+#include "../qwadro_afx/src/ux/auxIcd.h"
 
 _ZGLINL afxError _ZglDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRaster rasters[])
 {
-    afxError err = 0;
+    afxError err = { 0 };
 
     for (afxUnit i = 0; i < cnt; i++)
     {
@@ -53,7 +53,7 @@ _ZGLINL afxError _ZglDsysDeallocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt,
 
 _ZGLINL afxError _ZglDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxRasterInfo const infos[], avxRaster rasters[])
 {
-    afxError err = 0;
+    afxError err = { 0 };
 
     for (afxUnit i = 0; i < cnt; i++)
     {
@@ -87,7 +87,7 @@ _ZGLINL afxError _ZglDsysAllocateRastersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
 
 _ZGLINL afxError _ZglDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxBuffer buffers[])
 {
-    afxError err = 0;
+    afxError err = { 0 };
 
     for (afxUnit i = 0; i < cnt; i++)
     {
@@ -118,7 +118,7 @@ _ZGLINL afxError _ZglDsysDeallocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt,
 
 _ZGLINL afxError _ZglDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, avxBufferInfo const infos[], avxBuffer buffers[])
 {
-    afxError err = 0;
+    afxError err = { 0 };
 
     for (afxUnit i = 0; i < cnt; i++)
     {
@@ -149,7 +149,7 @@ _ZGLINL afxError _ZglDsysAllocateBuffersCb_SW(afxDrawSystem dsys, afxUnit cnt, a
     return err;
 }
 
-_ZGL _avxDsysImpl const _ZGL_DSYS_IMPL =
+_ZGL _avxDdiDsys const _ZGL_DDI_DSYS =
 {
     .fencCls = _AvxDsysGetFencClassCb_SW,
     .dexuCls = _AvxDsysGetDexuClassCb_SW,
@@ -174,11 +174,13 @@ _ZGL _avxDsysImpl const _ZGL_DSYS_IMPL =
     .deallocRasCb = _ZglDsysDeallocateRastersCb_SW,
     .allocBufCb = _ZglDsysAllocateBuffersCb_SW,
     .deallocBufCb = _ZglDsysDeallocateBuffersCb_SW,
+
+    //.waitFencCb = _ZglWaitFencOnHost
 };
 
 _ZGL afxError _ZglDsysDtorCb(afxDrawSystem dsys)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     AvxWaitForDrawSystem(dsys, AFX_TIMEOUT_INFINITE);
@@ -218,7 +220,7 @@ _ZGL afxError _ZglDsysDtorCb(afxDrawSystem dsys)
 
 _ZGL afxError _ZglDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DSYS, 1, &dsys);
 
     afxModule icd = args[0];
@@ -340,7 +342,7 @@ _ZGL afxError _ZglDsysCtorCb(afxDrawSystem dsys, void** args, afxUnit invokeNo)
     if (_AVX_DSYS_CLASS_CONFIG.ctor(dsys, (void*[]) { icd, (void*)&cfg2, (void*)bridgeCfgs }, 0)) AfxThrowError();
     else
     {
-        dsys->m.pimpl = &_ZGL_DSYS_IMPL;
+        dsys->m.ddi = &_ZGL_DDI_DSYS;
 
         afxChain *classes = &dsys->m.ctx.classes;
         AfxMountClass(&dsys->m.fencCls, NIL, classes, &fencClsConf);

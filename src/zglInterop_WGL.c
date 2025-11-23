@@ -1455,7 +1455,7 @@ BOOL(*__stdcall zglDrvSwapBuffers)(/*SURFOBJ**/ void*pso, /*WNDOBJ**/ void*pwo) 
 
 _ZGL afxError TestCoreSymbols(HMODULE opengl32, glVmt const* vmt)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     afxUnit symCnt = (sizeof(*vmt) / sizeof(vmt->ptr));
     void*const*pa = &vmt->ptr;
 
@@ -1491,7 +1491,7 @@ _ZGL afxError TestCoreSymbols(HMODULE opengl32, glVmt const* vmt)
 
 _ZGL afxError wglLoadCoreSymbols(HMODULE opengl32, glVmt* gl)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     afxUnit symCnt = (sizeof(*gl) / sizeof(gl->ptr));
     wglLoadSymbolsSIG(opengl32, 0, symCnt, &gl->ptr, 1);
     TestCoreSymbols(opengl32, gl);
@@ -1499,7 +1499,7 @@ _ZGL afxError wglLoadCoreSymbols(HMODULE opengl32, glVmt* gl)
 
 _ZGL afxError __stdcall wglLoadSymbolsSIG(HMODULE opengl32, afxUnit base, afxUnit cnt, void* vmt[], afxBool echo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     afxString128 tmp;
     AfxMakeString128(&tmp, 0);
     afxString name;
@@ -1584,7 +1584,7 @@ _ZGL afxError __stdcall wglLoadSymbolsSIG(HMODULE opengl32, afxUnit base, afxUni
 
 _ZGL PROC wglGetProcAddressSIG(HMODULE opengl32, LPCSTR lpProcName)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     PROC f;
 
     if (/*(!wgl.GetProcAddress) || */!wglGetProcAddressWIN || !(f = wglGetProcAddressWIN(lpProcName)))
@@ -1683,7 +1683,7 @@ HMODULE GetSymbolInfoFromAddress(void* addr, Dl_info* info)
 
 _ZGL LRESULT WINAPI _ZglTmpWndPrcCbW32(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     //afxObject obj = (afxObject)(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 
     if (message == WM_SHOWWINDOW)
@@ -1697,7 +1697,7 @@ _ZGL LRESULT WINAPI _ZglTmpWndPrcCbW32(HWND hWnd, UINT message, WPARAM wParam, L
 #if 0
 _ZGL void __stdcall wglLoadWsiSymbolsSIG(HMODULE opengl32, afxUnit* verMajor, afxUnit* verMinor, afxUnit* verPatch)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     static afxBool loaded = FALSE;
 
@@ -2267,7 +2267,7 @@ _ZGL void APIENTRY _glDbgMsgCb(GLenum source, GLenum type, GLuint id, GLenum sev
 
 _ZGL afxError wglCreateSurfaceSIGMA(int atX, int atY, HWND* phWnd, HDC* phDC, int* pPixFmt, PIXELFORMATDESCRIPTOR* pPfd)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     DWORD pfdFlags = PFD_DOUBLEBUFFER | PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_SWAP_EXCHANGE | PFD_DIRECT3D_ACCELERATED;
     DWORD wndStyles = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
@@ -2442,7 +2442,7 @@ _ZGL afxError wglCreateSurfaceSIGMA(int atX, int atY, HWND* phWnd, HDC* phDC, in
 
 _ZGL afxError wglCreateContextSIGMA(HDC hDC, HGLRC hShareCtx, int verMaj, int verMin, afxBool fwd, afxBool robust, afxBool dbg, HGLRC* phGLRC, glVmt* gl, afxBool echo)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     AFX_ASSERT(wglGetCurrentDCWIN);
     AFX_ASSERT(wglGetCurrentContextWIN);
@@ -2548,7 +2548,7 @@ _ZGL afxError wglCreateContextSIGMA(HDC hDC, HGLRC hShareCtx, int verMaj, int ve
 
 _ZGL void wglDetectDeviceFeaturesSIGMA(glVmt const* gl, HDC hDC, afxDrawFeatures* pFeatures)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     afxDrawFeatures features = { 0 };
     
     features.robustBufAccess = wglHasExtensionSIG(hDC, "GL_ARB_robustness");
@@ -2689,7 +2689,7 @@ _ZGL void wglDetectDeviceFeaturesSIGMA(glVmt const* gl, HDC hDC, afxDrawFeatures
 
 _ZGL void wglDetectDeviceLimitsSIGMA(glVmt const* gl, afxDrawLimits* pLimits)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     GLfloat dataf;
     GLfloat dataf2[3];
     GLint datai;
@@ -3037,7 +3037,7 @@ BOOL WINAPI DllMain(
     DWORD fdwReason,     // reason for calling function
     LPVOID lpvReserved)  // reserved
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     // Perform actions based on the reason for calling.
     switch (fdwReason)
     {

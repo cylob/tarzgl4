@@ -21,11 +21,19 @@
 #define _ZGL_UNBIND_ANY_VIN_AT_END 1
 #define _ZGL_UNBIND_ANY_PIP_AT_END 1
 #define _ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_END 1
+#define _ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD 1
 #define _ZGL_UNBIND_ANY_INDIRECT_DISPATCH_BUF_AT_END 1
-#define _ZGL_UNBIND_INDIRECT_PARAM_BUF_AT_END 1
-
-#define USE_REAL_GL_FENCES 1
-//#define USE_SINGLE_GL_FENCES 1
+#define _ZGL_UNBIND_ANY_INDIRECT_DISPATCH_BUF_AT_CMD 1
+#define _ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_END 1
+#define _ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_CMD 1
+//#define _FLUSH_ON_IOREQ_EXECUTION TRUE
+//#define _FINISH_AFTER_ALL_IOREQ_EXECUTIONS TRUE
+#define _YIELD_AFTER_ALL_IOREQ_EXECUTIONS TRUE
+#define _YIELD_WITH_SLEEP_AFTER_ALL_IOREQ_EXECUTIONS TRUE
+#define _FLUSH_BEFORE_YIELD_AFTER_ALL_IOREQ_EXECUTIONS TRUE
+#define _YIELD_WITH_SLEEP_AFTER_BRIDGE_PROC TRUE
+#define _USE_REAL_GL_FENCES 1
+//#define _USE_SINGLE_GL_FENCES 1
 
 static const GLenum idxSizGl[] =
 {
@@ -38,14 +46,14 @@ static const GLenum idxSizGl[] =
 
 _ZGL void DpuMarkDebugStep(zglDpu* dpu, avxColor const color, afxString const* label)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     gl->DebugMessageInsert(GL_DEBUG_SOURCE_APPLICATION, GL_DEBUG_TYPE_MARKER, AvxGetColorRgba8(color), GL_DEBUG_SEVERITY_NOTIFICATION, label->len, label->start); _ZglThrowErrorOccuried();
 }
 
 _ZGL void DpuPushDebugScope(zglDpu* dpu, avxColor const color, afxString const* label)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     gl->PushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, AvxGetColorRgba8(color), label->len, label->start); _ZglThrowErrorOccuried();
@@ -54,7 +62,7 @@ _ZGL void DpuPushDebugScope(zglDpu* dpu, avxColor const color, afxString const* 
 
 _ZGL void DpuPopDebugScope(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     
     if (!dpu->dbgScopeStackTop) AfxThrowError();
@@ -69,7 +77,7 @@ _ZGL void DpuPopDebugScope(zglDpu* dpu)
 
 _ZGL void _DpuPlacePipelineBarrier(zglDpu* dpu, avxBusStage dstStage, avxPipelineAccess dstAcc)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     // Because GL pretend to be synchronous in execution model, it only expects a destination stage and access.
@@ -277,7 +285,7 @@ _ZGL void _DpuPlacePipelineBarrier(zglDpu* dpu, avxBusStage dstStage, avxPipelin
 
 _ZGL void DpuDraw(zglDpu* dpu, avxDrawIndirect const* data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     afxUnit cnt;
 
@@ -322,7 +330,11 @@ _ZGL void DpuDraw(zglDpu* dpu, avxDrawIndirect const* data)
     else
 #endif
     {
+#if 0
         if (firstInst)
+#else
+        if (firstInst > 1)
+#endif
         {
             AFX_ASSERT(gl->DrawArraysInstancedBaseInstance);
             gl->DrawArraysInstancedBaseInstance(top, firstVtx, vtxCnt, instCnt, firstInst); _ZglThrowErrorOccuried();
@@ -353,7 +365,7 @@ _ZGL void DpuDrawIndexed(zglDpu* dpu, avxDrawIndexedIndirect const* data)
         The assembled primitives execute the bound graphics pipeline.
     */
 
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     _DpuFlushPipelineState(dpu);
     if (!dpu->activePip)
@@ -365,22 +377,29 @@ _ZGL void DpuDrawIndexed(zglDpu* dpu, avxDrawIndexedIndirect const* data)
     _ZglFlushLigatureState(dpu);
     _ZglFlushVertexInputState(dpu);
 
+    afxUnit idxCnt = data->idxCnt;
+
     avxVertexInput vin = dpu->activeVin;
     afxUnit vaoHandleIdx = dpu->dpuIterIdx % _ZGL_VAO_SET_POP;
-    AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &vin->perDpu[dpu->m.exuIdx][vaoHandleIdx].bindings.idxSrcBuf);
-    afxSize idxBaseOff = vin->perDpu[dpu->m.exuIdx][vaoHandleIdx].bindings.idxSrcOff;
-    afxSize idxSrcRange = vin->perDpu[dpu->m.exuIdx][vaoHandleIdx].bindings.idxSrcRange;
-    afxSize idxSiz = vin->perDpu[dpu->m.exuIdx][vaoHandleIdx].bindings.idxSrcSiz;
+    zglVertexInputState* bindings = &vin->perDpu[dpu->m.exuIdx][vaoHandleIdx].bindings;
+    afxSize idxBufBaseOff = bindings->idxSrcOff;
+    afxSize idxSiz = bindings->idxSrcSiz;
+#if !0 // DEBUG
+    avxBuffer idxSrcBuf = bindings->idxSrcBuf;
+    AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &idxSrcBuf);
+    afxSize idxSrcBufSiz = AvxGetBufferCapacity(idxSrcBuf, 0);
+    afxSize idxSrcRange = bindings->idxSrcRange;
+    // Should be a NOP, not be an error. But we throw error here anyway to help debugging.
+    AFX_ASSERT(idxCnt);
+    AFX_ASSERT_RANGE(idxSrcBufSiz, idxBufBaseOff, idxSiz * idxCnt);
+    AFX_ASSERT_RANGE(idxSrcRange, 0, idxSiz * idxCnt);
+#endif
 
     GLint vtxOff2 = data->vtxOffset;
     afxUnit32 firstIdx = data->baseIdx;
     afxUnit32 instCnt = data->instCnt;
     afxUnit32 firstInst = data->baseInst;
-    afxSize dataOff = (idxBaseOff + (idxSiz * firstIdx));
-
-    afxUnit idxCnt = data->idxCnt;
-    AFX_ASSERT(idxCnt);
-    AFX_ASSERT_RANGE(idxSrcRange, 0, idxSiz * idxCnt);
+    afxSize dataOff = (idxBufBaseOff + (idxSiz * firstIdx));
 
     GLenum top = AfxToGlTopology(dpu->primTop);
 
@@ -388,11 +407,18 @@ _ZGL void DpuDrawIndexed(zglDpu* dpu, avxDrawIndexedIndirect const* data)
 
     AFX_ASSERT(!dpu->boundDrawIndBuf);
 
+    // If there any error occuried by calling the Draw functions refering to NULL pointers,
+    // some previous operations probably have unbind the IBO or the VAO.
+
 #if 0//FORCE_GL_GENERIC_FUNCS
     AFX_ASSERT(gl->DrawElementsInstancedBaseVertexBaseInstance);
     gl->DrawElementsInstancedBaseVertexBaseInstance(top, idxCnt, idxSizGl[idxSiz], (void const*)dataOff, instCnt, vtxOff2, firstInst); _ZglThrowErrorOccuried();
 #else
+#if 0
     if (instCnt)
+#else
+    if (instCnt > 1)
+#endif
     {
         if (firstInst)
         {
@@ -435,7 +461,7 @@ _ZGL void DpuDrawIndexed(zglDpu* dpu, avxDrawIndexedIndirect const* data)
 
 _ZGL void DpuDrawIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUnit32 drawCnt, afxUnit32 stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     _DpuFlushPipelineState(dpu);
     if (!dpu->activePip)
@@ -472,14 +498,16 @@ _ZGL void DpuDrawIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUnit3
     }
 #endif
 
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
     DpuBindAndSyncBuf(dpu, GL_DRAW_INDIRECT_BUFFER, NIL, TRUE);
     dpu->boundDrawIndBuf = NIL;
     dpu->boundDrawIndBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
 }
 
-_ZGL void DpuDrawIndirectCount(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride)
+_ZGL void DpuDrawIndirect2(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     _DpuFlushPipelineState(dpu);
     if (!dpu->activePip)
@@ -522,17 +550,21 @@ _ZGL void DpuDrawIndirectCount(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avx
     AFX_ASSERT(gl->MultiDrawArraysIndirectCount);
     gl->MultiDrawArraysIndirectCount(top, offPtr, cntBufOff, maxDrawCnt, stride); _ZglThrowErrorOccuried();
 
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
     DpuBindAndSyncBuf(dpu, GL_DRAW_INDIRECT_BUFFER, NIL, TRUE);
-    DpuBindAndSyncBuf(dpu, GL_PARAMETER_BUFFER, NIL, TRUE);
     dpu->boundDrawIndBuf = NIL;
     dpu->boundDrawIndBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_CMD
+    DpuBindAndSyncBuf(dpu, GL_PARAMETER_BUFFER, NIL, TRUE);
     dpu->boundParamBuf = NIL;
     dpu->boundParamBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_CMD
 }
 
 _ZGL void DpuDrawIndexedIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUnit32 drawCnt, afxUnit32 stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     _DpuFlushPipelineState(dpu);
     if (!dpu->activePip)
@@ -572,14 +604,16 @@ _ZGL void DpuDrawIndexedIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, a
     }
 #endif
 
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
     DpuBindAndSyncBuf(dpu, GL_DRAW_INDIRECT_BUFFER, NIL, TRUE);
     dpu->boundDrawIndBuf = NIL;
     dpu->boundDrawIndBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
 }
 
-_ZGL void DpuDrawIndexedIndirectCount(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride)
+_ZGL void DpuDrawIndexedIndirect2(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, avxBuffer cntBuf, afxUnit32 cntBufOff, afxUnit32 maxDrawCnt, afxUnit32 stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     _DpuFlushPipelineState(dpu);
     if (!dpu->activePip)
@@ -628,18 +662,21 @@ _ZGL void DpuDrawIndexedIndirectCount(zglDpu* dpu, avxBuffer buf, afxUnit32 offs
     AFX_ASSERT(gl->MultiDrawElementsIndirectCount);
     gl->MultiDrawElementsIndirectCount(top, idxSizGl[idxSiz], offPtr, cntBufOff, maxDrawCnt, stride); _ZglThrowErrorOccuried();
 
-
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_DRAW_BUF_AT_CMD
     DpuBindAndSyncBuf(dpu, GL_DRAW_INDIRECT_BUFFER, NIL, TRUE);
-    DpuBindAndSyncBuf(dpu, GL_PARAMETER_BUFFER, NIL, TRUE);
     dpu->boundDrawIndBuf = NIL;
     dpu->boundDrawIndBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_CMD
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_CMD
+    DpuBindAndSyncBuf(dpu, GL_PARAMETER_BUFFER, NIL, TRUE);
     dpu->boundParamBuf = NIL;
     dpu->boundParamBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_CMD
 }
 
 _ZGL void DpuDispatch(zglDpu* dpu, afxUnit grpCntX, afxUnit grpCntY, afxUnit grpCntZ)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     //_DpuBindAndSyncPip(dpu, (dpu->activePip != dpu->nextPip), TRUE, dpu->nextPip);
     //dpu->activePip = dpu->nextPip;
@@ -660,7 +697,7 @@ _ZGL void DpuDispatch(zglDpu* dpu, afxUnit grpCntX, afxUnit grpCntY, afxUnit grp
 
 _ZGL void DpuDispatchIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     //_DpuBindAndSyncPip(dpu, (dpu->activePip != dpu->nextPip), TRUE, dpu->nextPip);
     //dpu->activePip = dpu->nextPip;
@@ -683,16 +720,17 @@ _ZGL void DpuDispatchIndirect(zglDpu* dpu, avxBuffer buf, afxUnit32 offset)
     AFX_ASSERT(gl->DispatchComputeIndirect);
     gl->DispatchComputeIndirect(offset); _ZglThrowErrorOccuried();
 
-    // Unbind
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_DISPATCH_BUF_AT_CMD
     DpuBindAndSyncBuf(dpu, GL_DISPATCH_INDIRECT_BUFFER, NIL, TRUE);
     dpu->boundDispatchIndBuf = NIL;
     dpu->boundDispatchIndBufGpuHandle = 0;
+#endif//_ZGL_UNBIND_ANY_INDIRECT_DISPATCH_BUF_AT_CMD
 }
 
 #if 0
 _ZGL void _DpuCmdUpdateUniformVector(zglDpu* dpu, _zglCmdUniformVectorEXT const* cmd)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     GLuint loc = gl->GetUniformLocation(dpu->activePip->glHandle, cmd->name);
@@ -701,7 +739,7 @@ _ZGL void _DpuCmdUpdateUniformVector(zglDpu* dpu, _zglCmdUniformVectorEXT const*
 
 _ZGL void _DpuCmdUpdateUniformMatrix(zglDpu* dpu, _zglCmdUniformMatrixEXT const* cmd)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     GLuint loc = gl->GetUniformLocation(dpu->activePip->glHandle, cmd->name);
@@ -712,7 +750,7 @@ _ZGL void _DpuCmdUpdateUniformMatrix(zglDpu* dpu, _zglCmdUniformMatrixEXT const*
 
 _ZGL void _DpuEndOfCommands(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
 }
@@ -721,7 +759,7 @@ _ZGL void _DpuEndOfCommands(zglDpu* dpu)
 
 _ZGL afxError _DpuWork_Transfer(zglDpu* dpu, _avxIoReqPacket* subm)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     //AfxAssertObject(dexu, afxFcc_DEXU);
 
     switch (subm->Transfer.srcFcc)
@@ -902,7 +940,7 @@ _ZGL afxError _DpuWork_Transfer(zglDpu* dpu, _avxIoReqPacket* subm)
 #if 0
 _ZGL afxError _DpuWork_Stamp(zglDpu* dpu, _avxIoReqPacket* subm)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     for (afxUnit itemIdx = 0; itemIdx < subm->itemCnt; itemIdx++)
     {
@@ -1007,7 +1045,7 @@ _ZGL afxError _DpuWork_Stamp(zglDpu* dpu, _avxIoReqPacket* subm)
 
 _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
 
     afxThread thr;
@@ -1155,19 +1193,22 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
     gl->GetInteger64v(GL_MAX_SERVER_WAIT_TIMEOUT, &maxSrvWaitTimeout);
     dpu->maxSrvWaitTimeout = maxSrvWaitTimeout;
 
+    AfxMakeChain(&dpu->fenceSignalChain, dpu);
+
     dpu->dpuIterIdx = 0;
 
     while (1)
     {
 #if !0
-        AfxLockMutex(&dexu->m.schedCndMtx);
+            AfxLockMutex(&dexu->m.schedCndMtx);
 
-        while (!dexu->m.schedCnt)
-            AfxWaitCondition(&dexu->m.schedCnd, &dexu->m.schedCndMtx);
+            while (!dexu->m.schedCnt)
+                AfxWaitCondition(&dexu->m.schedCnd, &dexu->m.schedCndMtx);
 
-        dexu->m.schedCnt = 0;
-        AfxUnlockMutex(&dexu->m.schedCndMtx);
+            dexu->m.schedCnt = 0;
+            AfxUnlockMutex(&dexu->m.schedCndMtx);
 #endif
+
         afxBool ctxEntered = FALSE;
 
         if (!ctxEntered)
@@ -1197,9 +1238,12 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
 
         gl->BindBufferBase(GL_UNIFORM_BUFFER, dpu->activePushUboReservedBindPoint, dpu->pushSets[dpu->dpuIterIdx % _ZGL_PUSH_SET_POP].pushConstUbo); _ZglThrowErrorOccuried();
 
-        dexu->m.procCb(&dpu->m);
+        do
+        {
+            dexu->m.procCb(&dpu->m);
+        } while (_DpuProcessFenceSignalChain(dpu));
 
-#if 0
+#if !0
         {
             // At draw scope conclusion, it should not have a bound canvas. May be it was suspended rather than concluded.
             AFX_ASSERT(!dpu->canv);
@@ -1240,7 +1284,7 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
                 dpu->boundDispatchIndBufGpuHandle = 0;
             }
 #endif
-#ifdef _ZGL_UNBIND_INDIRECT_PARAM_BUF_AT_END
+#ifdef _ZGL_UNBIND_ANY_INDIRECT_PARAM_BUF_AT_END
             // unbind any indirect draw/dispatch parameter buffer
             if (dpu->boundParamBuf)
             {
@@ -1254,7 +1298,11 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
 
         _ZglProcessDeletionQueue(gl, &dexu->deletionQueue);
 
-        //AfxYield();
+#ifdef _YIELD_WITH_SLEEP_AFTER_BRIDGE_PROC
+        AfxSleep(1);
+#else
+        AfxYield();
+#endif//_YIELD_WITH_SLEEP_AFTER_BRIDGE_PROC
 
         if (AfxShouldThreadBeInterrupted())
             break;
@@ -1278,7 +1326,7 @@ _ZGL afxInt ZGL_DPU_THR_PROC(afxDrawBridge dexu)
 
 _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT(dpu);
 
     glVmt const* gl = dpu->gl;
@@ -1307,165 +1355,218 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
 
             if (AfxTryLockMutex(&dque->m.iorpChnMtx))
             {
-#if USE_REAL_GL_FENCES
-#if USE_SINGLE_GL_FENCES
-                GLsync singleGlFence = NIL;
-                afxBool singleGlFenceCompleted = FALSE;
+#if 0
+                do
 #endif
-#endif
-                //afxUnit iterCnt = 3; // in case we want to do a second fast iteration for resolve fences still holding the mutex.
-                afxUnit iterCnt = 1;
-
-                while (iterCnt--)
                 {
-                    _avxIoReqPacket* iorp;
-                    AFX_ITERATE_CHAIN_B2F(_avxIoReqPacket, iorp, hdr.chain, &dque->m.iorpChn)
+#if _USE_REAL_GL_FENCES
+#if _USE_SINGLE_GL_FENCES
+                    GLsync singleGlFence = NIL;
+                    afxBool singleGlFenceCompleted = FALSE;
+#endif
+#endif
+                    //afxUnit iterCnt = 3; // in case we want to do a second fast iteration for resolve fences still holding the mutex.
+                    //afxUnit iterCnt = 1;
+                    /*
+                        2 better fit iterCnt once it can iterate again after a Flush and/or Yield and mainly after a Finish
+                        without unlocking and relocking the mutex.
+                    */
+                    afxUnit iterCnt = 2;
+
+                    while (iterCnt--)
                     {
-                        AFX_ASSERT(dque->m.iorpChn.cnt);
-
-                        if (iorp->hdr.pulled == 0)
+                        _avxIoReqPacket* iorp;
+                        AFX_ITERATE_CHAIN_B2F(iorp, hdr.chain, &dque->m.iorpChn)
                         {
-                            iorp->hdr.pulled = 1;
-                            AfxGetClock(&iorp->hdr.pullTime);
-                            iorp->hdr.dpuId = dpu->m.portId;
+                            AFX_ASSERT(dque->m.iorpChn.cnt);
 
-                            AFX_ASSERT(iorpVmt->f[iorp->hdr.id]);
-                            if (afxError_TIMEOUT == iorpVmt->f[iorp->hdr.id](dpu, iorp))
-                                continue;
+                            if (iorp->hdr.pulled == 0)
+                            {
+                                iorp->hdr.pulled = 1;
+                                AfxGetClock(&iorp->hdr.pullTime);
+                                iorp->hdr.dpuId = dpu->m.portId;
 
-                            if (iorp->hdr.completionFence)
-                            {
-                                //_ZglResetFence(dpu, iorp->hdr.completionFence);
-                                ++mustWaitCnt;
-#if USE_REAL_GL_FENCES
-#ifndef USE_SINGLE_GL_FENCES
-                                iorp->hdr.syncIdd0 = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); _ZglThrowErrorOccuried();
-#else
-                                iorp->hdr.syncIdd0 = NIL;
-#endif
-#else
-                                iorp->hdr.syncIdd0 = NIL;
-#endif
-                            }
-                            else
-                            {
-                                iorp->hdr.syncIdd0 = NIL;
-                                AfxGetClock(&iorp->hdr.complTime);
-                                iorp->hdr.completed = 1;
-                                // if we have not to wait, delete it right now.
-                                _AvxDquePopIoReqPacket(dque, iorp);
-                            }
-                        }
-                        // if already pulled, test if it has been this DPU.
-                        else if (iorp->hdr.dpuId == dpu->m.portId)
-                        {
-                            if (iorp->hdr.completed)
-                            {
-                                // delete completed workload
-                                _AvxDquePopIoReqPacket(dque, iorp);
-                            }
-                            else
-                            {
-#if USE_REAL_GL_FENCES
-#ifndef USE_SINGLE_GL_FENCES
-                                GLsync glFence = iorp->hdr.syncIdd0;
-#else
-                                GLsync glFence = singleGlFence;
-#endif
-
-#ifdef USE_SINGLE_GL_FENCES
-                                GLenum rslt = GL_CONDITION_SATISFIED;
-                                if (!singleGlFenceCompleted && glFence)
+                                if (iorp->hdr.id == _AVX_GET_STD_IORP_ID(Execute))
                                 {
-                                    // To block all CPU operations until a sync object is signaled, you call this function:
-                                    rslt = gl->ClientWaitSync(glFence, GL_SYNC_FLUSH_COMMANDS_BIT, /*timeout*/0); _ZglThrowErrorOccuried();
-                                }
-#else
-                                // To block all CPU operations until a sync object is signaled, you call this function:
-                                GLenum rslt = gl->ClientWaitSync(glFence, GL_SYNC_FLUSH_COMMANDS_BIT, /*timeout*/0); _ZglThrowErrorOccuried();
-#endif
-                                /*
-                                    This function will not return until one of two things happens: the sync​ object parameter becomes signaled, or a number of nanoseconds greater than or equal to the timeout​ parameter passes.
-                                    If timeout​ is zero, the function will simply check to see if the sync object is signaled and return immediately.
-                                    Note that the fact that timeout​ is in nanoseconds does not imply that this function has true nanosecond granularity in its timeout; you are only guaranteed that at least that much time will pass.
-                                */
-
-                                switch (rslt)
-                                {
-                                case GL_TIMEOUT_EXPIRED: // the sync object has not been signaled within the given timeout period.
-                                    //AfxYield(); // once we have locked inside this loop, give way.
-                                    break; // switch; wait for next iteration
-                                case GL_ALREADY_SIGNALED: // the sync object was signaled before the function was called.
-                                case GL_CONDITION_SATISFIED: // the sync object was signaled within the given timeout period.
-                                {
-                                    iorp->hdr.completed = 1;
-                                    AfxGetClock(&iorp->hdr.complTime);
-                                    avxFence fenc = iorp->hdr.completionFence;
-
-                                    if (fenc)
+                                    if (iorp->Execute.wait)
                                     {
-                                        _ZglSignalFence(dpu, fenc);
+                                        _DpuWaitForFence(dpu, iorp->Execute.wait);
+                                        // Require flush.
                                     }
-#ifndef USE_SINGLE_GL_FENCES
-                                    gl->DeleteSync(glFence); _ZglThrowErrorOccuried();
-                                    iorp->hdr.syncIdd0 = NIL;
-#else
-                                    singleGlFenceCompleted = TRUE;
-#endif
-                                    _AvxDquePopIoReqPacket(dque, iorp);
-                                    --mustWaitCnt;
-                                    break;
                                 }
-                                case GL_WAIT_FAILED: // If an OpenGL Error occurred, then GL_WAIT_FAILED will be returned in addition to raising an error.
-                                default:
-#ifndef USE_SINGLE_GL_FENCES
-                                    gl->DeleteSync(glFence); _ZglThrowErrorOccuried();
-                                    iorp->hdr.syncIdd0 = NIL;
+
+                                AFX_ASSERT(iorpVmt->f[iorp->hdr.id]);
+                                if (afxError_TIMEOUT == iorpVmt->f[iorp->hdr.id](dpu, iorp))
+                                    continue;
+
+                                if (iorp->hdr.id == _AVX_GET_STD_IORP_ID(Execute))
+                                {
+                                    if (iorp->Execute.signal)
+                                    {
+                                        //_ZglSignalFence(dpu, iorp->Execute.signal);
+                                        _DpuSignalFence(dpu, iorp->Execute.signal);
+                                    }
+                                }
+
+#ifdef _FLUSH_ON_IOREQ_EXECUTION
+                                gl->Flush();
+#endif//_FLUSH_ON_IOREQ_EXECUTION
+
+                                if (iorp->hdr.completionFence)
+                                {
+                                    //_ZglResetFence(dpu, iorp->hdr.completionFence);
+                                    ++mustWaitCnt;
+#ifdef _USE_REAL_GL_FENCES
+#ifndef _USE_SINGLE_GL_FENCES
+                                    iorp->hdr.syncIdd0 = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); _ZglThrowErrorOccuried();
 #else
-                                    singleGlFenceCompleted = TRUE;
-#endif
-                                    iorp->hdr.completed = 1;
+                                    iorp->hdr.syncIdd0 = NIL;
+#endif//_USE_SINGLE_GL_FENCES
+#else
+                                    iorp->hdr.syncIdd0 = NIL;
+#endif//_USE_REAL_GL_FENCES
+                                }
+                                else
+                                {
+                                    iorp->hdr.syncIdd0 = NIL;
                                     AfxGetClock(&iorp->hdr.complTime);
+                                    iorp->hdr.completed = 1;
+                                    // if we have not to wait, delete it right now.
                                     _AvxDquePopIoReqPacket(dque, iorp);
-                                    --mustWaitCnt;
-                                    break;
                                 }
+                            }
+                            // if already pulled, test if it has been this DPU.
+                            else if (iorp->hdr.dpuId == dpu->m.portId)
+                            {
+                                if (iorp->hdr.completed)
+                                {
+                                    // delete completed workload
+                                    _AvxDquePopIoReqPacket(dque, iorp);
+                                }
+                                else
+                                {
+#ifdef _USE_REAL_GL_FENCES
+#ifndef _USE_SINGLE_GL_FENCES
+                                    GLsync glFence = iorp->hdr.syncIdd0;
 #else
-                                _ZglSignalFence(dpu, iorp->hdr.completionFence);
-#endif
+                                    GLsync glFence = singleGlFence;
+#endif//_USE_SINGLE_GL_FENCES
+
+#ifdef _USE_SINGLE_GL_FENCES
+                                    GLenum rslt = GL_CONDITION_SATISFIED;
+                                    if (!singleGlFenceCompleted && glFence)
+                                    {
+                                        // To block all CPU operations until a sync object is signaled, you call this function:
+                                        rslt = gl->ClientWaitSync(glFence, GL_SYNC_FLUSH_COMMANDS_BIT, /*timeout*/0); _ZglThrowErrorOccuried();
+                                    }
+#else
+                                    // To block all CPU operations until a sync object is signaled, you call this function:
+                                    GLenum rslt = gl->ClientWaitSync(glFence, GL_SYNC_FLUSH_COMMANDS_BIT, /*timeout*/0); _ZglThrowErrorOccuried();
+#endif//_USE_SINGLE_GL_FENCES
+                                    /*
+                                        This function will not return until one of two things happens: the sync​ object parameter becomes signaled, or a number of nanoseconds greater than or equal to the timeout​ parameter passes.
+                                        If timeout​ is zero, the function will simply check to see if the sync object is signaled and return immediately.
+                                        Note that the fact that timeout​ is in nanoseconds does not imply that this function has true nanosecond granularity in its timeout; you are only guaranteed that at least that much time will pass.
+                                    */
+
+                                    switch (rslt)
+                                    {
+                                    case GL_TIMEOUT_EXPIRED: // the sync object has not been signaled within the given timeout period.
+                                        //AfxYield(); // once we have locked inside this loop, give way.
+                                        break; // switch; wait for next iteration
+                                    case GL_ALREADY_SIGNALED: // the sync object was signaled before the function was called.
+                                    case GL_CONDITION_SATISFIED: // the sync object was signaled within the given timeout period.
+                                    {
+                                        iorp->hdr.completed = 1;
+                                        AfxGetClock(&iorp->hdr.complTime);
+                                        avxFence fenc = iorp->hdr.completionFence;
+
+                                        if (fenc)
+                                        {
+                                            //_ZglSignalFence(dpu, fenc);
+                                            _ZglFencSignalOnHostCb(fenc);
+                                        }
+#ifndef _USE_SINGLE_GL_FENCES
+                                        gl->DeleteSync(glFence); _ZglThrowErrorOccuried();
+                                        iorp->hdr.syncIdd0 = NIL;
+#else
+                                        singleGlFenceCompleted = TRUE;
+#endif//_USE_SINGLE_GL_FENCES
+                                        _AvxDquePopIoReqPacket(dque, iorp);
+                                        --mustWaitCnt;
+                                        break;
+                                    }
+                                    case GL_WAIT_FAILED: // If an OpenGL Error occurred, then GL_WAIT_FAILED will be returned in addition to raising an error.
+                                    default:
+#ifndef _USE_SINGLE_GL_FENCES
+                                        gl->DeleteSync(glFence); _ZglThrowErrorOccuried();
+                                        iorp->hdr.syncIdd0 = NIL;
+#else
+                                        singleGlFenceCompleted = TRUE;
+#endif//_USE_SINGLE_GL_FENCES
+                                        iorp->hdr.completed = 1;
+                                        AfxGetClock(&iorp->hdr.complTime);
+                                        _AvxDquePopIoReqPacket(dque, iorp);
+                                        --mustWaitCnt;
+                                        break;
+                                    }
+#else
+                                    _ZglSignalFence(dpu, iorp->hdr.completionFence);
+#endif//_USE_REAL_GL_FENCES
+                                }
                             }
                         }
-                    }
-#ifdef USE_SINGLE_GL_FENCES
-                    if (!singleGlFence && mustWaitCnt)
-                    {
-                        AFX_ASSERT(!singleGlFenceCompleted);
-                        singleGlFence = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); _ZglThrowErrorOccuried();
-                    }
-                    else
-#ifdef USE_SINGLE_GL_FENCES
-                    {
-                        if (!singleGlFenceCompleted)
+#ifdef _USE_SINGLE_GL_FENCES
+                        if (!singleGlFence && mustWaitCnt)
                         {
-                            if (iterCnt == 0 && mustWaitCnt)
-                            {
-                                iterCnt = 1;
-                                AfxYield();
-                                AfxSleep(0);
-                            }
+                            AFX_ASSERT(!singleGlFenceCompleted);
+                            singleGlFence = gl->FenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); _ZglThrowErrorOccuried();
                         }
                         else
+#ifdef _USE_SINGLE_GL_FENCES
                         {
-                            AFX_ASSERT(singleGlFenceCompleted);
-                            AFX_ASSERT(singleGlFence);
-                            gl->DeleteSync(singleGlFence); _ZglThrowErrorOccuried();
-                            singleGlFence = NIL;
+                            if (!singleGlFenceCompleted)
+                            {
+                                if (iterCnt == 0 && mustWaitCnt)
+                                {
+                                    iterCnt = 1;
+                                    AfxYield();
+                                    AfxSleep(0);
+                                }
+                            }
+                            else
+                            {
+                                AFX_ASSERT(singleGlFenceCompleted);
+                                AFX_ASSERT(singleGlFence);
+                                gl->DeleteSync(singleGlFence); _ZglThrowErrorOccuried();
+                                singleGlFence = NIL;
+                            }
+#endif//_USE_SINGLE_GL_FENCES
                         }
-#endif
+#endif//_USE_SINGLE_GL_FENCES
+#ifdef _FINISH_AFTER_ALL_IOREQ_EXECUTIONS
+                        gl->Finish();
+#else
+                        // Finish does already wait for completion, so we don't need to yield or flush.
+#ifdef _YIELD_AFTER_ALL_IOREQ_EXECUTIONS
+#ifdef _FLUSH_BEFORE_YIELD_AFTER_ALL_IOREQ_EXECUTIONS
+                    // Flush only if we are not flush after each batch.
+#ifndef _FLUSH_ON_IOREQ_EXECUTION
+                        gl->Flush();
+#endif//_FLUSH_ON_IOREQ_EXECUTION
+#endif//_FLUSH_BEFORE_YIELD_AFTER_ALL_IOREQ_EXECUTIONS
+#ifdef _YIELD_WITH_SLEEP_AFTER_ALL_IOREQ_EXECUTIONS
+                        AfxSleep(1);
+#else
+                        AfxYield();
+#endif//_YIELD_WITH_SLEEP_AFTER_ALL_IOREQ_EXECUTIONS
+#endif//_YIELD_AFTER_ALL_IOREQ_EXECUTIONS
+#endif//_FINISH_AFTER_ALL_IOREQ_EXECUTIONS
                     }
-#endif
                 }
-
+#if 0
+                while (mustWaitCnt);
+#endif
                 AfxSignalCondition(&dque->m.idleCnd);
                 AfxUnlockMutex(&dque->m.iorpChnMtx);
                 //AfxYield();
@@ -1490,7 +1591,7 @@ _ZGL afxBool _Dpu_ProcCb(zglDpu* dpu)
 
 _ZGL afxError _ZglDexuDtorCb(afxDrawBridge dexu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
 
     afxDrawSystem dsys = AvxGetBridgedDrawSystem(dexu, NIL);
@@ -1512,7 +1613,7 @@ _ZGL afxError _ZglDexuDtorCb(afxDrawBridge dexu)
 
 _ZGL afxError _ZglDexuCtorCb(afxDrawBridge dexu, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_DEXU, 1, &dexu);
 
     afxDrawSystem dsys = args[0];

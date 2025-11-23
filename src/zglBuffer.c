@@ -18,12 +18,12 @@
 #include "zglCommands.h"
 #include "zglObjects.h"
 
-//#define UNBIND_GL_BUF TRUE
+//#define _ALWAYS_UNBIND_GL_BUF TRUE
 
 _ZGL afxError DpuBindAndSyncBuf(zglDpu* dpu, GLenum glTarget, avxBuffer buf, afxBool keepBound)
 {
     //AfxEntry("buf=%p", buf);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     if (!buf)
@@ -157,12 +157,17 @@ _ZGL afxError DpuBindAndSyncBuf(zglDpu* dpu, GLenum glTarget, avxBuffer buf, afx
 
 _ZGL afxError DpuCopyBuffer(zglDpu* dpu, avxBuffer src, avxBuffer dst, afxUnit opCnt, avxBufferCopy const ops[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_COPY
+#ifdef _USE_IO_SLOTS_ON_BUFFER_COPY
+    GLenum glTargetSrc = GL_PIXEL_UNPACK_BUFFER;
+    GLenum glTargetDst = GL_PIXEL_PACK_BUFFER;
+#else
     GLenum glTargetSrc = GL_COPY_READ_BUFFER;
     GLenum glTargetDst = GL_COPY_WRITE_BUFFER;
+#endif
 #else
     GLenum glTargetSrc = src->glTarget;
     GLenum glTargetDst = dst->glTarget;
@@ -187,7 +192,7 @@ _ZGL afxError DpuCopyBuffer(zglDpu* dpu, avxBuffer src, avxBuffer dst, afxUnit o
         {
             gl->CopyBufferSubData(glTargetSrc, glTargetDst, ops[i].srcOffset, ops[i].dstOffset, ops[i].range); _ZglThrowErrorOccuried();
         }
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
         // unbind buffers
         DpuBindAndSyncBuf(dpu, glTargetSrc, NIL, TRUE); // unbind
         DpuBindAndSyncBuf(dpu, glTargetDst, NIL, TRUE); // unbind
@@ -198,10 +203,14 @@ _ZGL afxError DpuCopyBuffer(zglDpu* dpu, avxBuffer src, avxBuffer dst, afxUnit o
 
 _ZGL void DpuFillBuffer(zglDpu* dpu, avxBuffer buf, afxUnit offset, afxUnit range, afxUnit data)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_FILL
+#ifdef _USE_IO_SLOTS_ON_BUFFER_FILL
+    GLenum glTarget = GL_PIXEL_PACK_BUFFER;
+#else
     GLenum glTarget = GL_COPY_WRITE_BUFFER;
+#endif
 #else
     GLenum glTarget = buf->glTarget;
 #endif
@@ -215,7 +224,7 @@ _ZGL void DpuFillBuffer(zglDpu* dpu, avxBuffer buf, afxUnit offset, afxUnit rang
     {
         DpuBindAndSyncBuf(dpu, glTarget, buf, TRUE); // bind
         gl->ClearBufferSubData(glTarget, GL_R32UI, offset, range, GL_R32UI, GL_UNSIGNED_INT, &data); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
     }
@@ -240,7 +249,7 @@ _ZGL void DpuFillBuffer(zglDpu* dpu, avxBuffer buf, afxUnit offset, afxUnit rang
         AfxStream(range / sizeof(data), 0, sizeof(data), &data, dst);
         gl->UnmapBuffer(glTarget); _ZglThrowErrorOccuried();
         gl->FlushMappedBufferRange(glTarget, offset, range); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
     }
@@ -248,10 +257,14 @@ _ZGL void DpuFillBuffer(zglDpu* dpu, avxBuffer buf, afxUnit offset, afxUnit rang
 
 _ZGL afxError DpuDumpBuffer(zglDpu* dpu, avxBuffer buf, afxByte* dst, afxUnit opCnt, avxBufferIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_DUMP
+#ifdef _USE_IO_SLOTS_ON_BUFFER_DUMP
+    GLenum glTarget = GL_PIXEL_UNPACK_BUFFER;
+#else
     GLenum glTarget = GL_COPY_READ_BUFFER;
+#endif
 #else
     GLenum glTarget = buf->glTarget;
 #endif
@@ -334,7 +347,7 @@ _ZGL afxError DpuDumpBuffer(zglDpu* dpu, avxBuffer buf, afxByte* dst, afxUnit op
         }
     }
 
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
     if (bufBound)
     {
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE);
@@ -345,10 +358,14 @@ _ZGL afxError DpuDumpBuffer(zglDpu* dpu, avxBuffer buf, afxByte* dst, afxUnit op
 
 _ZGL afxError DpuUpdateBuffer(zglDpu* dpu, avxBuffer buf, afxByte const* src, afxUnit opCnt, avxBufferIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_UPDATE
+#ifdef _USE_IO_SLOTS_ON_BUFFER_UPDATE
+    GLenum glTarget = GL_PIXEL_PACK_BUFFER;
+#else
     GLenum glTarget = GL_COPY_WRITE_BUFFER;
+#endif
 #else
     GLenum glTarget = buf->glTarget;
 #endif
@@ -435,7 +452,7 @@ _ZGL afxError DpuUpdateBuffer(zglDpu* dpu, avxBuffer buf, afxByte const* src, af
         }
     }
 
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
     if (bufBound)
     {
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE);
@@ -446,11 +463,15 @@ _ZGL afxError DpuUpdateBuffer(zglDpu* dpu, avxBuffer buf, afxByte const* src, af
 
 _ZGL afxError _DpuDownloadBuffer(zglDpu* dpu, avxBuffer buf, afxStream out, afxUnit opCnt, avxBufferIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_DOWNLOAD
+#ifdef _USE_IO_SLOTS_ON_BUFFER_DOWNLOAD
+    GLenum glTarget = GL_PIXEL_UNPACK_BUFFER;
+#else
     GLenum glTarget = GL_COPY_READ_BUFFER;
+#endif
 #else
     GLenum glTarget = buf->glTarget;
 #endif
@@ -511,7 +532,7 @@ _ZGL afxError _DpuDownloadBuffer(zglDpu* dpu, avxBuffer buf, afxStream out, afxU
         }
     }
 
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
     if (bufBound)
     {
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
@@ -522,11 +543,15 @@ _ZGL afxError _DpuDownloadBuffer(zglDpu* dpu, avxBuffer buf, afxStream out, afxU
 
 _ZGL afxError _DpuUploadBuffer(zglDpu* dpu, avxBuffer buf, afxStream in, afxUnit opCnt, avxBufferIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_UPLOAD
+#ifdef _USE_IO_SLOTS_ON_BUFFER_UPLOAD
+    GLenum glTarget = GL_PIXEL_PACK_BUFFER;
+#else
     GLenum glTarget = GL_COPY_WRITE_BUFFER;
+#endif
 #else
     GLenum glTarget = buf->glTarget;
 #endif
@@ -588,7 +613,7 @@ _ZGL afxError _DpuUploadBuffer(zglDpu* dpu, avxBuffer buf, afxStream in, afxUnit
         }
     }
 
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
     if (bufBound)
     {
         DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
@@ -599,17 +624,29 @@ _ZGL afxError _DpuUploadBuffer(zglDpu* dpu, avxBuffer buf, afxStream in, afxUnit
 
 _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit range, afxFlags flags, void** placeholder)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     //AfxAssertObject(dexu, afxFcc_DEXU);
     glVmt const* gl = dpu->gl;
 
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING
     GLenum glTarget = NIL;
 
     if (buf->m.flags & avxBufferFlag_W)
+    {
+#ifdef _USE_IO_SLOTS_ON_BUFFER_MAPPING
+        glTarget = GL_PIXEL_PACK_BUFFER;
+#else
         glTarget = GL_COPY_WRITE_BUFFER;
+#endif
+    }
     else
+    {
+#ifdef _USE_IO_SLOTS_ON_BUFFER_MAPPING
+        glTarget = GL_PIXEL_UNPACK_BUFFER;
+#else
         glTarget = GL_COPY_READ_BUFFER;
+#endif
+    }
 #else
     GLenum glTarget = buf->glTarget;
 #endif
@@ -650,7 +687,7 @@ _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit r
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, TRUE); // bind
                 buf->m.storage[0].mapPtr = gl->MapBufferRange(glTarget, offset, range, buf->glMapRangeAccess); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
                 DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
 
@@ -679,7 +716,7 @@ _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit r
         {
             DpuBindAndSyncBuf(dpu, glTarget, buf, TRUE); // bind
             gl->UnmapBuffer(glTarget); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
             DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
         }
@@ -698,7 +735,7 @@ _ZGL afxError _DpuRemapBuf(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit r
 #if 0
 _ZGL afxError _BufRemapCb(avxBuffer buf, afxUnit offset, afxUnit range, afxFlags flags, void** placeholder)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
     AFX_ASSERT_RANGE(buf->m.cap, offset, range);
 
@@ -766,7 +803,7 @@ _ZGL afxError _BufRemapCb(avxBuffer buf, afxUnit offset, afxUnit range, afxFlags
 
 _ZGL afxError _BufDtorCb(avxBuffer buf)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     afxDrawSystem dsys = AvxGetBufferHost(buf);
 
@@ -1060,7 +1097,7 @@ _ZGL afxError _BufCtorCb(avxBuffer buf, void** args, afxUnit invokeNo)
 
 _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     if (subm->SyncMaps.flushCnt)
@@ -1072,7 +1109,7 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
 
             avxBuffer buf = map->buf;
             AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING
             GLenum glTarget = (buf->m.flags & avxBufferFlag_W) ? GL_COPY_WRITE_BUFFER : GL_COPY_READ_BUFFER;
 #else
             GLenum glTarget = buf->glTarget;
@@ -1086,7 +1123,7 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, TRUE); // bind
                 gl->FlushMappedBufferRange(glTarget, map->offset, map->range); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
                 // unbind and dispose buffer.
                 DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
@@ -1104,7 +1141,7 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
 
             avxBuffer buf = map->buf;
             AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING
             GLenum glTarget = (buf->m.flags & avxBufferFlag_W) ? GL_COPY_WRITE_BUFFER : GL_COPY_READ_BUFFER;
 #else
             GLenum glTarget = buf->glTarget;
@@ -1115,7 +1152,7 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
 
                 AFX_ASSERT(gl->InvalidateBufferSubData); // GL Core 4.3
                 gl->InvalidateBufferSubData(glTarget, map->offset, map->range); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
                 // unbind and dispose buffer.
                 DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
@@ -1129,7 +1166,7 @@ _ZGL afxError _DpuWork_SyncMaps(zglDpu* dpu, _avxIoReqPacket* subm)
 
 _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     if (subm->Remap.unmapCnt)
@@ -1140,7 +1177,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
             _avxBufferRemapping const* unmap = &subm->Remap.unmapOps[subm->Remap.firstUnmapIdx + i];
             avxBuffer buf = unmap->buf;
             AFX_ASSERT_OBJECTS(afxFcc_BUF, 1, &buf);
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING
             GLenum glTarget = (buf->m.flags & avxBufferFlag_W) ? GL_COPY_WRITE_BUFFER : GL_COPY_READ_BUFFER;
 #else
             GLenum glTarget = buf->glTarget;
@@ -1154,7 +1191,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
             {
                 DpuBindAndSyncBuf(dpu, glTarget, buf, TRUE); // bind
                 gl->UnmapBuffer(glTarget); _ZglThrowErrorOccuried();
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
                 // unbind and dispose buffer.
                 DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif
@@ -1182,7 +1219,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
             _avxBufferRemapping const* map = &subm->Remap.mapOps[subm->Remap.firstMapIdx + i];
 
             avxBuffer buf = map->buf;
-#ifdef _USE_BUF_RW_SLOT
+#ifdef _USE_RW_SLOTS_ON_BUFFER_MAPPING
             GLenum glTarget = (buf->m.flags & avxBufferFlag_W) ? GL_COPY_WRITE_BUFFER : GL_COPY_READ_BUFFER;
 #else
             GLenum glTarget = buf->glTarget;
@@ -1218,7 +1255,7 @@ _ZGL afxError _DpuWork_Remap(zglDpu* dpu, _avxIoReqPacket* subm)
                 {
                     ptr = gl->MapBufferRange(glTarget, map->offset, map->range, buf->glMapRangeAccess); _ZglThrowErrorOccuried();
                 }
-#if UNBIND_GL_BUF
+#if _ALWAYS_UNBIND_GL_BUF
                 // unbind and dispose buffer.
                 DpuBindAndSyncBuf(dpu, glTarget, NIL, TRUE); // unbind
 #endif

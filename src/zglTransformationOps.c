@@ -28,7 +28,7 @@
 
 _ZGL void _ZglFlushTsChanges(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     
     dpu->primTop = dpu->nextPrimTop;
@@ -290,7 +290,7 @@ _ZGL void _ZglFlushTsChanges(zglDpu* dpu)
 
 _ZGL void DpuSetViewports(zglDpu* dpu, afxUnit first, afxUnit cnt, avxViewport const vp[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_RANGE(ZGL_MAX_VIEWPORTS, first, cnt);
 
     for (afxUnit i = 0; i < cnt; i++)
@@ -303,7 +303,7 @@ _ZGL void DpuSetViewports(zglDpu* dpu, afxUnit first, afxUnit cnt, avxViewport c
 
 _ZGL void DpuBeginQueryIndexedEXT(zglDpu* dpu, avxQueryPool queryPool, afxUnit query, afxBool precise, afxUnit index)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -321,7 +321,7 @@ _ZGL void DpuBeginQueryIndexedEXT(zglDpu* dpu, avxQueryPool queryPool, afxUnit q
 
 _ZGL void DpuBeginTransformFeedbackEXT(zglDpu* dpu, afxUnit firstCounterBuffer, afxUnit counterBufferCount, avxBuffer pCounterBuffers[], const afxSize pCounterBufferOffsets[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -345,7 +345,7 @@ _ZGL void DpuBeginTransformFeedbackEXT(zglDpu* dpu, afxUnit firstCounterBuffer, 
 
 _ZGL void DpuBindTransformFeedbackBuffersEXT(zglDpu* dpu, afxUnit firstBinding, afxUnit bindingCount, avxBuffer pBuffers[], const afxSize pOffsets[], const afxSize pSizes[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     GLuint xfbo = 0;
@@ -366,7 +366,7 @@ _ZGL void DpuBindTransformFeedbackBuffersEXT(zglDpu* dpu, afxUnit firstBinding, 
 
 _ZGL void DpuDrawIndirectByteCountEXT(zglDpu* dpu, afxUnit instanceCount, afxUnit firstInstance, avxBuffer counterBuffer, afxSize counterBufferOffset, afxUnit counterOffset, afxUnit vertexStride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -410,7 +410,7 @@ _ZGL void DpuDrawIndirectByteCountEXT(zglDpu* dpu, afxUnit instanceCount, afxUni
 
 _ZGL void DpuEndQueryIndexedEXT(zglDpu* dpu, avxQueryPool queryPool, afxUnit query, afxUnit index)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -427,7 +427,7 @@ _ZGL void DpuEndQueryIndexedEXT(zglDpu* dpu, avxQueryPool queryPool, afxUnit que
 
 _ZGL void DpuEndTransformFeedbackEXT(zglDpu* dpu, afxUnit firstCounterBuffer, afxUnit counterBufferCount, avxBuffer pCounterBuffers[], const afxSize pCounterBufferOffsets[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -444,7 +444,7 @@ _ZGL void DpuEndTransformFeedbackEXT(zglDpu* dpu, afxUnit firstCounterBuffer, af
 
 _ZGL void DpuDrawMeshTasksEXT(zglDpu* dpu, afxUnit w, afxUnit h, afxUnit d)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -471,7 +471,7 @@ _ZGL void DpuDrawMeshTasksEXT(zglDpu* dpu, afxUnit w, afxUnit h, afxUnit d)
 
 _ZGL void DpuDrawMeshTasksIndirectEXT(zglDpu* dpu, avxBuffer buf, afxSize offset, afxUnit drawCnt, afxUnit stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*
@@ -527,7 +527,7 @@ _ZGL void DpuDrawMeshTasksIndirectEXT(zglDpu* dpu, avxBuffer buf, afxSize offset
 
 _ZGL void DpuDrawMeshTasksIndirectCountEXT(zglDpu* dpu, avxBuffer buf, afxSize offset, avxBuffer cntBuf, afxSize cntBufOffset, afxUnit maxDrawCnt, afxUnit stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     /*

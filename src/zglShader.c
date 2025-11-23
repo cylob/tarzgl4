@@ -131,7 +131,7 @@ vec4 saturate(vec4 x) {\n \
 
 _ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxCodebase codb, afxUnit stageCnt, _avxProgrammableStage stages[], afxUnit* glShaderCnt, GLuint glShaders[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &codb);
@@ -304,7 +304,7 @@ _ZGL afxError _DpuCreateShaders(zglDpu* dpu, avxCodebase codb, afxUnit stageCnt,
 _ZGL afxError _DpuSyncShd(zglDpu* dpu, avxCodebase shd, avxShaderType stage)
 {
     //AfxEntry("shd=%p", shd);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = &dpu->gl;
 
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
@@ -368,7 +368,7 @@ _ZGL afxError _DpuSyncShd(zglDpu* dpu, avxCodebase shd, avxShaderType stage)
 
 _ZGL afxError _ZglShdDtor(avxCodebase shd)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     afxDrawSystem dsys = AvxGetShaderHost(shd);
     
@@ -392,7 +392,7 @@ _ZGL afxError _ZglShdDtor(avxCodebase shd)
 
 _ZGL afxError _ZglShdCtor(avxCodebase shd, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_SHD, 1, &shd);
 
     if (_AVX_SHD_CLASS_CONFIG.ctor(shd, args, invokeNo)) AfxThrowError();

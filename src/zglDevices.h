@@ -58,6 +58,8 @@ AFX_DEFINE_STRUCT(zglDpu)
 
     //afxBool         instanced;
 
+    afxChain            fenceSignalChain;
+
     afxUnit             dbgScopeStackTop;
 
     // NEXT TRANSFORMATION AND CLIPPING STATE
@@ -456,6 +458,12 @@ _ZGL afxError _ZglSemDtorCb(afxSemaphore sem);
 _ZGL afxError _ZglFencCtorCb(avxFence fenc, void** args, afxUnit invokeNo);
 _ZGL afxError _ZglFencDtorCb(avxFence fenc);
 ZGL afxError _ZglSignalFence(zglDpu* dpu, avxFence fenc);
+ZGL afxError _ZglFencSignalOnHostCb(avxFence fenc);
 ZGL afxError _ZglResetFence(zglDpu* dpu, avxFence fenc);
+
+
+ZGL afxError _DpuWaitForFence(zglDpu* dpu, avxFence fenc);
+ZGL afxError _DpuSignalFence(zglDpu* dpu, avxFence fenc);
+ZGL afxUnit _DpuProcessFenceSignalChain(zglDpu* dpu);
 
 #endif//ZGL_DEVICES_H

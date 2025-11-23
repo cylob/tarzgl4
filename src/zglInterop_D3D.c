@@ -317,7 +317,7 @@ ZGL afxError checkForResizeDxgi(zglDpu* dpu, afxSurface dout);
 
 _ZGL afxError setObjectsLockedDxgi(zglDpu* dpu, afxSurface dout, afxBool locked)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     afxDrawDevice ddev = AvxGetSurfaceHost(dout);
 
     if (dout->dxgi.mRenderbufferBufferHandle == NIL)
@@ -444,7 +444,7 @@ _ZGL afxError createSwapchainDxgi(zglDpu* dpu, afxSurface dout);
 
 _ZGL afxError checkForResizeDxgi(zglDpu* dpu, afxSurface dout)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     RECT rect;
 
@@ -471,7 +471,7 @@ _ZGL afxError checkForResizeDxgi(zglDpu* dpu, afxSurface dout)
 
 _ZGL IDXGIFactory *GetDXGIFactoryFromDevice(ID3D11Device *device)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
 
     IDXGIDevice *dxgiDevice = NIL;
     HRESULT result = ID3D11Device_QueryInterface(device, &IID_IDXGIDevice, (void**)(&dxgiDevice));
@@ -503,7 +503,7 @@ _ZGL IDXGIFactory *GetDXGIFactoryFromDevice(ID3D11Device *device)
 
 _ZGL afxError createSwapchainDxgi(zglDpu* dpu, afxSurface dout)
 {
-    afxError err = NIL;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     afxDrawDevice ddev = AvxGetSurfaceHost(dout);

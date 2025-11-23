@@ -21,7 +21,7 @@
 # if 0
 _ZGL afxError _ZglTexFlushDevice(glVmt const* gl, GLenum glTarget, avxRaster ras) // ras must be bound
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     //AFX_ASSERT((ras->updFlags & ZGL_UPD_FLAG_DEVICE_FLUSH) == ZGL_UPD_FLAG_DEVICE_FLUSH);
 
@@ -118,7 +118,7 @@ _ZGL afxError _ZglTexFlushDevice(glVmt const* gl, GLenum glTarget, avxRaster ras
 _ZGL afxError DpuBindAndSyncRas(zglDpu* dpu, afxUnit glUnit, avxRaster ras, afxBool keepBound)
 {
     //AfxEntry("img=%p", img);
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     
     if (!ras)
@@ -494,7 +494,7 @@ _ZGL afxError DpuBindAndSyncRas(zglDpu* dpu, afxUnit glUnit, avxRaster ras, afxB
 
 _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, afxUnit opCnt, avxRasterIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
@@ -547,7 +547,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, ras->glFmt, ras->glType, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -556,7 +556,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -572,7 +572,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage3D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, ras->glFmt, ras->glType, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -581,7 +581,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -597,7 +597,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->whd.w, rgn->whd.d, ras->glFmt, ras->glType, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -606,7 +606,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -623,7 +623,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage1D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->whd.w, ras->glFmt, ras->glType, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -632,7 +632,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -646,7 +646,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     for (afxUnit i = 0; i < rgn->whd.d; i++)
@@ -658,7 +658,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -686,7 +686,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -695,11 +695,11 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
-                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, glTarget, ras->glHandle);
+                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, glTarget, ras->glHandle);
                     gl->CompressedTexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
                 }
                 break;
@@ -712,7 +712,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage3D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -721,11 +721,11 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
-                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, glTarget, ras->glHandle);
+                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, glTarget, ras->glHandle);
                     gl->CompressedTexSubImage3D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
                 }
                 break;
@@ -738,7 +738,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -747,11 +747,11 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
-                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, glTarget, ras->glHandle);
+                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, glTarget, ras->glHandle);
                     gl->CompressedTexSubImage2D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
                 }
                 break;
@@ -765,7 +765,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage1D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
@@ -774,11 +774,11 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
-                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER, glTarget, ras->glHandle);
+                    zglBindTextureUnit(gl, ZGL_COPY_WRITE_RASTER_SLOT, glTarget, ras->glHandle);
                     gl->CompressedTexSubImage1D(glTarget, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, compressedSiz, &src[op->offset]); _ZglThrowErrorOccuried();
                 }
                 break;
@@ -789,7 +789,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     for (afxUnit i = 0; i < rgn->whd.d; i++)
@@ -801,7 +801,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -817,10 +817,10 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
         }
     }
 
-#if UNBIND_GL_TEX
+#if _ALWAYS_UNBIND_GL_TEX
     if (rasBound)
     {
-        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, NIL, TRUE);
+        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, NIL, TRUE);
     }
 #endif
     return err;
@@ -828,7 +828,7 @@ _ZGL afxError _DpuUpdateRaster(zglDpu* dpu, avxRaster ras, afxByte const* src, a
 
 _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit opCnt, avxRasterIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
@@ -864,7 +864,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasSynced)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
                     rasSynced = TRUE;
                 }
                 gl->GetCompressedTextureSubImage(ras->glHandle, op->rgn.lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, bufSiz, &dst[op->offset]); _ZglThrowErrorOccuried();
@@ -873,7 +873,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -893,7 +893,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -916,7 +916,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasSynced)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
                     rasSynced = TRUE;
                 }
                 gl->GetTextureSubImage(ras->glHandle, op->rgn.lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, ras->glFmt, ras->glType, bufSiz, &dst[op->offset]); _ZglThrowErrorOccuried();
@@ -925,7 +925,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasSynced)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
                     rasSynced = TRUE;
                 }
                 gl->PixelStorei(GL_PACK_SKIP_PIXELS, rgn->origin.x); _ZglThrowErrorOccuried();
@@ -944,7 +944,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -964,7 +964,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -983,10 +983,10 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
         }
     }
 
-#if UNBIND_GL_TEX
+#if _ALWAYS_UNBIND_GL_TEX
     if (rasBound)
     {
-        DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, NIL, TRUE);
+        DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, NIL, TRUE);
     }
 #endif
     return err;
@@ -994,7 +994,7 @@ _ZGL afxError _DpuDumpRaster(zglDpu* dpu, avxRaster ras, afxByte* dst, afxUnit o
 
 _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit opCnt, avxRasterIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
@@ -1045,7 +1045,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, ras->glFmt, ras->glType, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1054,7 +1054,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1069,7 +1069,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage3D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, ras->glFmt, ras->glType, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1078,7 +1078,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1094,7 +1094,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.z, rgn->whd.w, rgn->whd.d, ras->glFmt, ras->glType, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1103,7 +1103,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1120,7 +1120,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage1D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->whd.w, ras->glFmt, ras->glType, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1129,7 +1129,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1143,7 +1143,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->TextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, ras->glFmt, ras->glType, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1152,7 +1152,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1182,7 +1182,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1191,7 +1191,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1206,7 +1206,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage3D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->origin.z, rgn->whd.w, rgn->whd.h, rgn->whd.d, glFmt, compressedSiz, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1215,7 +1215,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1231,7 +1231,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1240,7 +1240,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1257,7 +1257,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage1D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->whd.w, glFmt, compressedSiz, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1266,7 +1266,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1280,7 +1280,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasSynced)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, FALSE); // sync
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, FALSE); // sync
                         rasSynced = TRUE;
                     }
                     gl->CompressedTextureSubImage2D(ras->glHandle, rgn->lodIdx, rgn->origin.x, rgn->origin.y, rgn->whd.w, rgn->whd.h, glFmt, compressedSiz, (void const*)op->offset); _ZglThrowErrorOccuried();
@@ -1289,7 +1289,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
                 {
                     if (!rasBound)
                     {
-                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE); // bind
+                        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE); // bind
                         rasSynced = TRUE;
                         rasBound = TRUE;
                     }
@@ -1306,11 +1306,11 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
         }
     }
 
-#if UNBIND_GL_TEX
+#if _ALWAYS_UNBIND_GL_TEX
     DpuBindAndSyncBuf(dpu, GL_PIXEL_UNPACK_BUFFER, NIL, TRUE);
     if (rasBound)
     {
-        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, NIL, TRUE);
+        DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, NIL, TRUE);
     }
 #endif
     return err;
@@ -1318,7 +1318,7 @@ _ZGL afxError DpuUnpackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit
 
 _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit opCnt, avxRasterIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
@@ -1356,7 +1356,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasSynced)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
                     rasSynced = TRUE;
                 }
                 gl->GetCompressedTextureSubImage(ras->glHandle, op->rgn.lodIdx, op->rgn.origin.x, op->rgn.origin.y, op->rgn.origin.z, op->rgn.whd.w, op->rgn.whd.h, op->rgn.whd.d, bufSiz, (void*)op->offset); _ZglThrowErrorOccuried();
@@ -1365,7 +1365,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -1385,7 +1385,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -1408,7 +1408,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasSynced)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
                     rasSynced = TRUE;
                 }
                 gl->GetTextureSubImage(ras->glHandle, op->rgn.lodIdx, op->rgn.origin.x, op->rgn.origin.y, op->rgn.origin.z, op->rgn.whd.w, op->rgn.whd.h, op->rgn.whd.d, ras->glFmt, ras->glType, bufSiz, (void*)op->offset); _ZglThrowErrorOccuried();
@@ -1417,7 +1417,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasSynced)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
                     rasSynced = TRUE;
                 }
                 gl->PixelStorei(GL_PACK_SKIP_PIXELS, op->rgn.origin.x); _ZglThrowErrorOccuried();
@@ -1436,7 +1436,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -1456,7 +1456,7 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
             {
                 if (!rasBound)
                 {
-                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE); // bind
+                    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE); // bind
                     rasSynced = TRUE;
                     rasBound = TRUE;
                 }
@@ -1475,11 +1475,11 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
         }
     }
 
-#if UNBIND_GL_TEX
+#if _ALWAYS_UNBIND_GL_TEX
     DpuBindAndSyncBuf(dpu, GL_PIXEL_PACK_BUFFER, NIL, TRUE);
     if (rasBound)
     {
-        DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, NIL, TRUE);
+        DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, NIL, TRUE);
     }
 #endif
     return err;
@@ -1487,12 +1487,12 @@ _ZGL afxError DpuPackRaster(zglDpu* dpu, avxRaster ras, avxBuffer buf, afxUnit o
 
 _ZGL afxError _DpuDownloadRaster(zglDpu* dpu, avxRaster ras, afxStream out, afxUnit opCnt, avxRasterIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, TRUE);
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     avxFormatDescription pfd;
@@ -1567,19 +1567,19 @@ _ZGL afxError _DpuDownloadRaster(zglDpu* dpu, avxRaster ras, afxStream out, afxU
     gl->PixelStorei(GL_PACK_SKIP_ROWS, 0); _ZglThrowErrorOccuried();
     gl->PixelStorei(GL_PACK_SKIP_IMAGES, 0); _ZglThrowErrorOccuried();
 
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, NIL, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, NIL, TRUE);
 
     return err;
 }
 
 _ZGL afxError _DpuUploadRaster(zglDpu* dpu, avxRaster ras, afxStream in, afxUnit opCnt, avxRasterIo const* ops)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
     glVmt const* gl = dpu->gl;
-    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, ras, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, ras, TRUE);
     afxBool is3d = AvxGetRasterFlags(ras, avxRasterFlag_3D);
 
     GLenum glTarget = ras->glTarget;
@@ -1664,14 +1664,14 @@ _ZGL afxError _DpuUploadRaster(zglDpu* dpu, avxRaster ras, afxStream in, afxUnit
         gl->DeleteBuffers(1, &pbo); _ZglThrowErrorOccuried();
     }
 
-    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, NIL, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, NIL, TRUE);
 
     return err;
 }
 
 _ZGL afxError DpuCopyRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUnit opCnt, avxRasterCopy const ops[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     AFX_ASSERT(dpu->inDrawScope == FALSE); // This is a transfer operation.
 
@@ -1679,8 +1679,8 @@ _ZGL afxError DpuCopyRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUnit o
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &dst);
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
     // keep bound because wrapper functions have workaround for missing DSA functions.
-    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, dst, TRUE);
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, src, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, dst, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, src, TRUE);
 
     avxFormatDescription srcPfd, dstPfd;
     AvxDescribeFormats(1, &src->m.fmt, &srcPfd);
@@ -1729,15 +1729,15 @@ _ZGL afxError DpuCopyRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUnit o
     }
 
     // unbind textures
-    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, NIL, TRUE);
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, NIL, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, NIL, TRUE);
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, NIL, TRUE);
 
     return err;
 }
 
 _ZGL afxError _ZglDpuResolveRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUnit opCnt, avxRasterCopy const ops[])
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &dst);
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
@@ -1765,14 +1765,14 @@ _ZGL afxError _ZglDpuResolveRaster(zglDpu* dpu, avxRaster src, avxRaster dst, af
     AFX_ASSERT(!AvxGetRasterFlags(dst, avxRasterFlag_MULTISAMP));
     //AFX_ASSERT(src->m.fmt == dst->m.fmt); // GL can deal with some potential convertions.
 
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, src, FALSE); // sync
-    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, dst, FALSE); // sync
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, src, FALSE); // sync
+    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, dst, FALSE); // sync
     
     GLenum filter = ZglToGlTexelFilterMode(avxTexelFilter_NEAREST);
 
     GLuint fboOpSrc, fboOpDst;
     GLuint tempFbos[2];
-    afxBool useTempFbo = _RESOLVE_RASTER_WITH_GEN_FBOS;
+    afxBool useTempFbo = _USE_GEN_FBO_ON_RASTER_RESOLVE;
     if (useTempFbo)
     {
         gl->GenFramebuffers(2, tempFbos); _ZglThrowErrorOccuried();
@@ -1857,7 +1857,7 @@ _ZGL afxError _ZglDpuResolveRaster(zglDpu* dpu, avxRaster src, avxRaster dst, af
 
 _ZGL afxError _ZglDpuBlitRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUnit opCnt, avxRasterBlit const ops[], avxTexelFilter flt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &dst);
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &src);
@@ -1875,14 +1875,14 @@ _ZGL afxError _ZglDpuBlitRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUn
         (e.g., for mipmap generation or format conversion), a shader-based blit might be required.
     */
 
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, src, FALSE); // sync
-    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER, dst, FALSE); // sync
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, src, FALSE); // sync
+    DpuBindAndSyncRas(dpu, ZGL_COPY_WRITE_RASTER_SLOT, dst, FALSE); // sync
 
     GLenum filter = ZglToGlTexelFilterMode(flt);
 
     GLuint fboOpSrc, fboOpDst;
     GLuint tempFbos[2];
-    afxBool useTempFbo = _BLIT_RASTER_WITH_GEN_FBOS;
+    afxBool useTempFbo = _USE_GEN_FBO_ON_RASTER_BLIT;
     if (useTempFbo)
     {
         gl->GenFramebuffers(2, tempFbos); _ZglThrowErrorOccuried();
@@ -1967,18 +1967,18 @@ _ZGL afxError _ZglDpuBlitRaster(zglDpu* dpu, avxRaster src, avxRaster dst, afxUn
 
 _ZGL afxError _ZglDpuClearRaster(zglDpu* dpu, avxRaster ras, avxClearValue const* clearVal, afxUnit baseLodIdx, afxUnit lodCnt, afxUnit baseLayer, afxUnit layerCnt)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
-    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER, ras, FALSE); // sync
+    DpuBindAndSyncRas(dpu, ZGL_COPY_READ_RASTER_SLOT, ras, FALSE); // sync
 
     // TODO: replace it to support non-drawable formats.
 
 
     GLuint fboOpDst;
     GLuint tempFbo;
-    afxBool useTempFbo = _CLEAR_RASTER_WITH_GEN_FBOS;
+    afxBool useTempFbo = _USE_GEN_FBO_ON_RASTER_CLEAR;
     if (useTempFbo)
     {
         gl->GenFramebuffers(1, &tempFbo); _ZglThrowErrorOccuried();
@@ -2098,7 +2098,7 @@ _ZGL afxError _ZglDpuClearRaster(zglDpu* dpu, avxRaster ras, avxClearValue const
 
 _ZGL afxError _ZglRasDtor(avxRaster ras)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_RAS, 1, &ras);
 
     afxDrawSystem dsys = AvxGetRasterHost(ras);
@@ -2121,7 +2121,7 @@ _ZGL afxError _ZglRasDtor(avxRaster ras)
 
 _ZGL afxError _ZglRasCtor(avxRaster ras, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     if (_AVX_RAS_CLASS_CONFIG.ctor(ras, args, invokeNo)) AfxThrowError();
     else

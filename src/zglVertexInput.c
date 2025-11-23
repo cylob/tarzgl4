@@ -44,7 +44,7 @@
 
 _ZGL void _ZglUnbindVinResources(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     // Disabled because Intel was throwing INVALID_OP
@@ -88,7 +88,7 @@ _ZGL void _ZglUnbindVinResources(zglDpu* dpu)
 
 _ZGL void _ZglFlushVertexInputState(zglDpu* dpu)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     avxVertexInput vin = dpu->nextVin;
@@ -459,7 +459,7 @@ _ZGL void DpuBindVertexBuffers(zglDpu* dpu, afxUnit first, afxUnit cnt, avxBuffe
         If drawing using shader objects or if the bound pipeline state object was also created with the VK_DYNAMIC_STATE_VERTEX_INPUT_EXT dynamic state enabled then vkCmdSetVertexInputEXT can be used instead of vkCmdBindVertexBuffers2 to set the stride.
     */
 
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     glVmt const* gl = dpu->gl;
 
     AFX_ASSERT_RANGE(ZGL_MAX_VERTEX_ATTRIB_BINDINGS, first, cnt);
@@ -495,7 +495,7 @@ _ZGL void DpuBindVertexBuffers(zglDpu* dpu, afxUnit first, afxUnit cnt, avxBuffe
 
 _ZGL void DpuBindIndexBuffer(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUnit32 range, afxUnit32 stride)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
 
     // deferred because it requires the vertex input info.
 
@@ -514,7 +514,7 @@ _ZGL void DpuBindIndexBuffer(zglDpu* dpu, avxBuffer buf, afxUnit32 offset, afxUn
 
 _ZGL void DpuBindVertexInput(zglDpu* dpu, avxVertexInput vin)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     
     dpu->nextVin = vin;
     AFX_TRY_ASSERT_OBJECTS(afxFcc_VIN, 1, &vin);
@@ -522,7 +522,7 @@ _ZGL void DpuBindVertexInput(zglDpu* dpu, avxVertexInput vin)
 
 _ZGL afxError _ZglVinDtor(avxVertexInput vin)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_VIN, 1, &vin);
     afxDrawSystem dsys = AfxGetHost(vin);
 
@@ -546,7 +546,7 @@ _ZGL afxError _ZglVinDtor(avxVertexInput vin)
 
 _ZGL afxError _ZglVinCtor(avxVertexInput vin, void** args, afxUnit invokeNo)
 {
-    afxError err = AFX_ERR_NONE;
+    afxError err = { 0 };
     AFX_ASSERT_OBJECTS(afxFcc_VIN, 1, &vin);
 
     if (_AVX_VIN_CLASS_CONFIG.ctor(vin, args, invokeNo)) AfxThrowError();

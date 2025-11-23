@@ -53,15 +53,6 @@
     <ClCompile Include="..\..\dep\gl\wgl.c">
       <Filter>e2tarzgl4\dep\gl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\zglDrawSystem_WGL.c">
-      <Filter>e2tarzgl4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zglDrawBridge_WGL.c">
-      <Filter>e2tarzgl4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\zglDrawDevice_WGL.c">
-      <Filter>e2tarzgl4</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\zglBuffer.c">
       <Filter>e2tarzgl4\io</Filter>
     </ClCompile>
@@ -103,6 +94,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\zglVertexInput.c">
       <Filter>e2tarzgl4\pipe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglDrawBridge_WGL.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglDrawDevice_WGL.c">
+      <Filter>e2tarzgl4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\zglDrawSystem_WGL.c">
+      <Filter>e2tarzgl4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
